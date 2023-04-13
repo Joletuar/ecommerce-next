@@ -2,10 +2,10 @@ import { FC } from 'react';
 
 import Head from 'next/head';
 
-import { Nabvar } from '../ui';
+import { Nabvar, SideMenu } from '../ui';
 
 interface Props {
-    children?: JSX.Element[];
+    children?: JSX.Element[] | JSX.Element;
     title: string;
     pageDescription: string;
     imageFullUrl?: string; // Debe ser un url completo, no parcial
@@ -42,7 +42,7 @@ export const ShopLayout: FC<Props> = ({
                 </nav>
             </header>
 
-            {/* Sidebar */}
+            <SideMenu />
 
             <main
                 style={{

@@ -1,7 +1,11 @@
 import { NextPage } from 'next';
 
 import { ShopLayout } from '@/components/layouts';
+import { ProductList } from '@/components/products';
+
 import Typography from '@mui/material/Typography'; // Es recomendable usar este tipo de importaciones porque es más rapido
+
+import { initialData } from '@/database/products';
 
 const HomePage: NextPage = () => {
     return (
@@ -18,6 +22,10 @@ const HomePage: NextPage = () => {
             <Typography variant='h2' sx={{ mb: 1 }}>
                 Todos los productos
             </Typography>
+
+            {/* Contenedor principal de nuestro aplicación */}
+
+            <ProductList products={initialData.products as any} />
         </ShopLayout>
     );
 };
