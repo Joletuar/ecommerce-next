@@ -1,4 +1,5 @@
 import { FC, useMemo, useState } from 'react';
+import NextLink from 'next/link';
 
 import {
     Grid,
@@ -7,6 +8,7 @@ import {
     CardMedia,
     Box,
     Typography,
+    Link,
 } from '@mui/material';
 
 import { IProduct } from '@/interfaces';
@@ -36,17 +38,27 @@ export const ProductCard: FC<Props> = ({ product }) => {
                 onMouseLeave={() => setIsHovered(false)}
             >
                 <Card className='fadeIn'>
-                    {/* El "CardActionArea" permite que se pueda hacer click sobre una card, es decri, da ese efecto de que es clickable, hoover, resaltado, ect.*/}
-                    <CardActionArea>
-                        {/* Aqui renderizamos componentes media */}
-                        {/* El "CardMedia" tambien permite cargar los elementos bajo demanda */}
-                        {/* CardMedia: posee el método onLoad, el cual se dispara cuando la imagen se termina de cargar */}
-                        <CardMedia
-                            component='img'
-                            image={productImage}
-                            alt={product.title}
-                        />
-                    </CardActionArea>
+                    <NextLink
+                        href='/product/slug'
+                        passHref
+                        legacyBehavior
+                        // Con esto evitamos que cargue en cache la info de los productos
+                        prefetch={false}
+                    >
+                        <Link>
+                            {/* El "CardActionArea" permite que se pueda hacer click sobre una card, es decri, da ese efecto de que es clickable, hoover, resaltado, ect.*/}
+                            <CardActionArea>
+                                {/* Aqui renderizamos componentes media */}
+                                {/* El "CardMedia" tambien permite cargar los elementos bajo demanda */}
+                                {/* CardMedia: posee el método onLoad, el cual se dispara cuando la imagen se termina de cargar */}
+                                <CardMedia
+                                    component='img'
+                                    image={productImage}
+                                    alt={product.title}
+                                />
+                            </CardActionArea>
+                        </Link>
+                    </NextLink>
                 </Card>
 
                 {/* Los components tambien soportan las clases que nosotros definimos de manera personalizada */}
