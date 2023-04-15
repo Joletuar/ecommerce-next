@@ -20,7 +20,9 @@ export const Nabvar = () => {
 
                 <NextLink href='/' legacyBehavior passHref>
                     <Link display='flex' alignItems='center'>
-                        <Typography variant='h6'>Teslo |</Typography>
+                        <Typography variant='h6' fontWeight={600}>
+                            Teslo |
+                        </Typography>
                         <Typography sx={{ ml: 0.5 }}>Shop</Typography>
                     </Link>
                 </NextLink>
