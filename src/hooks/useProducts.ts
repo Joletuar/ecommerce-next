@@ -1,4 +1,4 @@
-import { IDataFetched, IProduct } from '@/interfaces';
+import { IDataFetched } from '@/interfaces';
 import useSWR, { SWRConfiguration } from 'swr';
 
 // const fetcher = (...args: [key: string]) =>
@@ -12,6 +12,7 @@ export const useProducts = (url: string, config: SWRConfiguration = {}) => {
     //     fetcher,
     //     config
     // );
+    console.log(url);
 
     const { data, error } = useSWR<IDataFetched>(
         `http://localhost:3452/api${url}`,
@@ -20,6 +21,7 @@ export const useProducts = (url: string, config: SWRConfiguration = {}) => {
 
     return {
         products: data?.products || [],
+        product: data?.product || {},
         isLoading: !error && !data?.ok,
         isError: error,
     };

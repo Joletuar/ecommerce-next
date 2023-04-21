@@ -1,19 +1,31 @@
-import { NextPage } from 'next';
+import { GetServerSideProps, NextPage } from 'next';
 
 import { ShopLayout } from '@/components/layouts';
 
 import { Box, Button, Chip, Grid, Typography } from '@mui/material';
 
-import { initialData } from '@/database/products';
 import {
     ProductSelectSizesSelector,
     ProductSlideShow,
 } from '@/components/products';
+
 import { ItemCounter } from '@/components/ui';
+import { useProducts } from '@/hooks';
+import { IProduct } from '@/interfaces';
 
-const product = initialData.products[0];
+interface Props {
+    product: IProduct;
+}
 
-const ProductPage: NextPage = () => {
+const ProductPage: NextPage<Props> = ({ product }) => {
+    // No se acostumbra a generar esta páginas así, dado que esto no tiene SEO
+
+    // // Obtenemos los parametros de ruta
+    // const { query } = useRouter();
+
+    // // Realizamos la petición a la api
+    // const { product, isLoading } = useProducts(`/products/${query}`);
+
     return (
         <ShopLayout title={product.title} pageDescription={product.description}>
             <Grid container spacing={3}>
@@ -92,3 +104,37 @@ const ProductPage: NextPage = () => {
 };
 
 export default ProductPage;
+
+// Vamos hacer que está página se genere en el servido en cada request que se haga
+// Esto de aqui ya se encuentra del lado del servidor
+
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+    // Obtenemos el parámetro dinámico de la ruta
+
+    const { slug = '' } = ctx.params as { slug: string };
+
+    // Con el slug obtenido de la ruta hacemos la consulta a la base de datos par obtener información del producto
+
+    const data = await fetch(`http://localhost:3452/api/products/${slug}`);
+    const { product } = (await data.json()) as {
+        ok: boolean;
+        product: IProduct;
+    };
+
+    // Si el producto no existe redireccionamos a la pág principal
+
+    if (!product) {
+        return {
+            redirect: {
+                destination: '/',
+                permanent: false, // Al indicar como false se da la posibilidad que la página si puede llegar a existir en un futuro
+            },
+        };
+    }
+
+    // Devolvemos las props al componente principal
+
+    return {
+        props: { product },
+    };
+};

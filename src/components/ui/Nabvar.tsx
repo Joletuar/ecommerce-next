@@ -1,4 +1,9 @@
+import { useContext } from 'react';
+
 import NextLink from 'next/link';
+import { useRouter } from 'next/router';
+
+import { UiContext } from '@/context';
 
 import Toolbar from '@mui/material/Toolbar';
 import AppBar from '@mui/material/AppBar';
@@ -13,6 +18,12 @@ import SearchOutlined from '@mui/icons-material/SearchOutlined';
 import ShoppingCartCheckoutOutlined from '@mui/icons-material/ShoppingCartCheckoutOutlined';
 
 export const Nabvar = () => {
+    // Este hook nos información de la ruta actual
+    // Podemos acceder a su propiedad path para saber la url actual
+    const { pathname } = useRouter();
+
+    const { toggleSideMenu } = useContext(UiContext);
+
     return (
         <AppBar>
             <Toolbar>
@@ -47,19 +58,44 @@ export const Nabvar = () => {
                 >
                     <NextLink href='/category/men' legacyBehavior passHref>
                         <Link>
-                            <Button>Men's</Button>
+                            <Button
+                                // Cambiar el color actual de boton en función de la ruta actual
+                                color={
+                                    pathname === '/category/men'
+                                        ? 'primary'
+                                        : 'info'
+                                }
+                            >
+                                Men's
+                            </Button>
                         </Link>
                     </NextLink>
 
                     <NextLink href='/category/women' legacyBehavior passHref>
                         <Link>
-                            <Button>Women's</Button>
+                            <Button
+                                color={
+                                    pathname === '/category/women'
+                                        ? 'primary'
+                                        : 'info'
+                                }
+                            >
+                                Women's
+                            </Button>
                         </Link>
                     </NextLink>
 
                     <NextLink href='/category/kid' legacyBehavior passHref>
                         <Link>
-                            <Button>Kids</Button>
+                            <Button
+                                color={
+                                    pathname === '/category/kid'
+                                        ? 'primary'
+                                        : 'info'
+                                }
+                            >
+                                Kids
+                            </Button>
                         </Link>
                     </NextLink>
                 </Box>
@@ -83,7 +119,9 @@ export const Nabvar = () => {
                     </Link>
                 </NextLink>
 
-                <Button sx={{ ml: 1 }}>Menu</Button>
+                <Button onClick={toggleSideMenu} sx={{ ml: 1 }}>
+                    Menu
+                </Button>
             </Toolbar>
         </AppBar>
     );
