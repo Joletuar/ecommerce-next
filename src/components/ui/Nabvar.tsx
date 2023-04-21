@@ -51,7 +51,7 @@ export const Nabvar = () => {
                         </Link>
                     </NextLink>
 
-                    <NextLink href='/category/men' legacyBehavior passHref>
+                    <NextLink href='/category/women' legacyBehavior passHref>
                         <Link>
                             <Button>Women's</Button>
                         </Link>

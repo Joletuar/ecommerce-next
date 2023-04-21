@@ -1,28 +1,25 @@
 import { NextPage } from 'next';
 
+import { useProducts } from '@/hooks';
 import { ShopLayout } from '@/components/layouts';
 import { ProductList } from '@/components/products';
-
-import Typography from '@mui/material/Typography'; // Es recomendable usar este tipo de importaciones porque es más rapido
-import { useProducts } from '@/hooks';
 import { FullScreenLoading } from '@/components/ui';
+import { Typography } from '@mui/material';
 
-const HomePage: NextPage = () => {
-    const { products, isLoading } = useProducts('/products');
+const KidPage: NextPage = () => {
+    const { products, isLoading } = useProducts(`/products?gender=kid`);
 
     return (
         <ShopLayout
-            title='Teslo Shop | Next'
-            pageDescription='Productos de ropas'
+            title='Categoría - Kid'
+            pageDescription='Página con las prendas para niños'
         >
-            {/* El prop "component" es importante para el SEO, ya que especifica como el componente será renderizado dentro del documento html */}
-
             <Typography variant='h1' component='h1'>
                 Tienda
             </Typography>
 
             <Typography variant='h2' sx={{ mb: 1 }}>
-                Todos los productos
+                Todos los productos para niños
             </Typography>
 
             {/* Contenedor principal de nuestro aplicación */}
@@ -36,4 +33,4 @@ const HomePage: NextPage = () => {
     );
 };
 
-export default HomePage;
+export default KidPage;

@@ -19,11 +19,14 @@ interface Props {
 
 export const ProductCard: FC<Props> = ({ product }) => {
     const [isHovered, setIsHovered] = useState(false);
+    const [isImageLoaded, setIsImageLoaded] = useState(false);
+
+    // Hay que tener en cuenta que siempre si no se pone el "/" al inicio tomará la ruta relativa, caso contrario tomara la ruta absoluta
 
     const productImage = useMemo(() => {
         return isHovered
-            ? `products/${product.images[1]}`
-            : `products/${product.images[0]}`;
+            ? `/products/${product.images[1]}`
+            : `/products/${product.images[0]}`;
     }, [isHovered]);
 
     return (
@@ -39,7 +42,7 @@ export const ProductCard: FC<Props> = ({ product }) => {
             >
                 <Card className='fadeIn'>
                     <NextLink
-                        href='/product/slug'
+                        href={`/product/${product.slug}`}
                         passHref
                         legacyBehavior
                         // Con esto evitamos que cargue en cache la info de los productos
@@ -55,6 +58,7 @@ export const ProductCard: FC<Props> = ({ product }) => {
                                     component='img'
                                     image={productImage}
                                     alt={product.title}
+                                    onLoad={() => setIsImageLoaded(true)} // Esto se va a disparar cuando el recurso se cargue
                                 />
                             </CardActionArea>
                         </Link>
@@ -63,7 +67,10 @@ export const ProductCard: FC<Props> = ({ product }) => {
 
                 {/* Los components tambien soportan las clases que nosotros definimos de manera personalizada */}
 
-                <Box sx={{ mt: 1 }} className='fadeIn'>
+                <Box
+                    sx={{ mt: 1, display: isImageLoaded ? 'block' : 'none' }}
+                    className='fadeIn'
+                >
                     <Typography fontWeight={700}>{product.title}</Typography>
                     <Typography fontWeight={500}>${product.price}</Typography>
                 </Box>
