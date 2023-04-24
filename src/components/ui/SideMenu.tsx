@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import { useRouter } from 'next/router';
 
 import { UiContext } from '@/context';
@@ -32,12 +32,21 @@ import {
 } from '@mui/material';
 
 export const SideMenu = () => {
-    const { isMenuOpen, toggleSideMenu } = useContext(UiContext);
     const router = useRouter();
+    const { isMenuOpen, toggleSideMenu } = useContext(UiContext);
+    const [searchTerm, setSearchTerm] = useState('');
 
     const navigateTo = (url: string) => {
-        router.push(url);
         toggleSideMenu();
+        router.push(url);
+    };
+
+    const onSearchPage = () => {
+        // si no hay nada escrito entonces no hacemos nada
+
+        if (searchTerm.trim().length === 0) return;
+
+        navigateTo(`/search/${searchTerm}`);
     };
 
     return (
@@ -59,11 +68,18 @@ export const SideMenu = () => {
                     <ListItem>
                         {/* Usando la prop "endAdorment" podemos incrustar un ícono al final del input/elemento */}
                         <Input
+                            autoFocus // Con esto hacemos que el elemento se enfoque automaticamente
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            // Vamos a estar pendientes de cuando el usuario haga enter, y solo así llamamos nuestra función
+                            onKeyDown={(e) =>
+                                e.key === 'Enter' ? onSearchPage() : null
+                            }
                             type='text'
                             placeholder='Search...'
                             endAdornment={
                                 <InputAdornment position='end'>
-                                    <IconButton aria-label='toggle password visibility'>
+                                    <IconButton onClick={onSearchPage}>
                                         <SearchOutlined />
                                     </IconButton>
                                 </InputAdornment>
