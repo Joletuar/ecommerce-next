@@ -10,6 +10,7 @@ import {
     Box,
     Typography,
     Link,
+    Chip,
 } from '@mui/material';
 
 import { IProduct } from '@/interfaces';
@@ -55,6 +56,16 @@ export const ProductCard: FC<Props> = ({ product }) => {
                         <Link>
                             {/* El "CardActionArea" permite que se pueda hacer click sobre una card, es decri, da ese efecto de que es clickable, hoover, resaltado, ect.*/}
                             <CardActionArea>
+                                {product.inStock <= 0 && (
+                                    <Chip
+                                        label='No hay stock'
+                                        color='primary'
+                                        sx={{
+                                            position: 'absolute',
+                                            zIndex: 99,
+                                        }}
+                                    />
+                                )}
                                 {/* Aqui renderizamos componentes media */}
                                 {/* El "CardMedia" tambien permite cargar los elementos bajo demanda */}
                                 {/* CardMedia: posee el método onLoad, el cual se dispara cuando la imagen se termina de cargar */}

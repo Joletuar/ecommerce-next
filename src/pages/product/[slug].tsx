@@ -10,7 +10,6 @@ import {
 } from '@/components/products';
 
 import { ItemCounter } from '@/components/ui';
-import { useProducts } from '@/hooks';
 import { IProduct } from '@/interfaces';
 
 interface Props {
@@ -62,27 +61,27 @@ const ProductPage: NextPage<Props> = ({ producto }) => {
                             </Typography>
                         </Box>
 
-                        {/* Agregar al carrito */}
-
-                        <Button
-                            color='secondary'
-                            className='circular-btn'
-                            sx={{
-                                ':hover': {
-                                    backgroundColor: 'rgb(19, 143, 232)',
-                                },
-                            }}
-                        >
-                            Agregar al carrito
-                        </Button>
-
                         {/* Este elemento permite mostrar información  */}
 
-                        {/* <Chip
-                            label='No hay stock de momento'
-                            color='error'
-                            variant='outlined'
-                        /> */}
+                        {producto.inStock <= 0 ? (
+                            <Chip
+                                label='No hay stock de momento'
+                                color='error'
+                                variant='outlined'
+                            />
+                        ) : (
+                            <Button
+                                color='secondary'
+                                className='circular-btn'
+                                sx={{
+                                    ':hover': {
+                                        backgroundColor: 'rgb(19, 143, 232)',
+                                    },
+                                }}
+                            >
+                                Agregar al carrito
+                            </Button>
+                        )}
 
                         {/* Descripcion */}
 
