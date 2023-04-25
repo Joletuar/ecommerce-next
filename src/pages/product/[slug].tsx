@@ -1,3 +1,4 @@
+import { useState, MouseEvent } from 'react';
 import { NextPage, GetStaticPaths, GetStaticProps } from 'next';
 
 import { ShopLayout } from '@/components/layouts';
@@ -10,7 +11,7 @@ import {
 } from '@/components/products';
 
 import { ItemCounter } from '@/components/ui';
-import { IProduct } from '@/interfaces';
+import { ICartProduct, IProduct, ISize } from '@/interfaces';
 
 interface Props {
     producto: IProduct;
@@ -24,6 +25,33 @@ const ProductPage: NextPage<Props> = ({ producto }) => {
 
     // // Realizamos la petición a la api
     // const { product, isLoading } = useProducts(`/products/${query}`);
+
+    const [tempCartProduct, setTempCartProduct] = useState<ICartProduct>({
+        _id: producto._id,
+        image: producto.images[0],
+        price: producto.price,
+        slug: producto.slug,
+        title: producto.title,
+        gender: producto.gender,
+        quantity: 1,
+    });
+
+    // Sobreescribimos o creamos la propiedad size con la talla seleccionada
+    const onHandleSelectSize = (size: ISize) => {
+        setTempCartProduct({ ...tempCartProduct, size });
+    };
+
+    // Actualizamos el valor del contador
+    const updatedValue = (quantity: number) => {
+        setTempCartProduct({
+            ...tempCartProduct,
+            quantity,
+        });
+    };
+
+    const onAddProduct = (product: ICartProduct) => {
+        console.log(product);
+    };
 
     return (
         <ShopLayout
@@ -53,12 +81,20 @@ const ProductPage: NextPage<Props> = ({ producto }) => {
 
                         <Box sx={{ my: 2 }}>
                             <Typography variant='subtitle2'>
-                                <ItemCounter />
-                                <ProductSelectSizesSelector
-                                    sizes={producto.sizes}
-                                    selectedSize={producto.sizes[1]}
-                                />
+                                Cantidad
                             </Typography>
+
+                            <ItemCounter
+                                currentValue={tempCartProduct.quantity}
+                                updatedValue={updatedValue}
+                                maxValue={producto.inStock}
+                            />
+                            <ProductSelectSizesSelector
+                                sizes={producto.sizes}
+                                // Mandamos el size seleccionado por el usuario
+                                selectedSize={tempCartProduct.size}
+                                onHandleSelectSize={onHandleSelectSize}
+                            />
                         </Box>
 
                         {/* Este elemento permite mostrar información  */}
@@ -71,6 +107,7 @@ const ProductPage: NextPage<Props> = ({ producto }) => {
                             />
                         ) : (
                             <Button
+                                onClick={() => onAddProduct(tempCartProduct)}
                                 color='secondary'
                                 className='circular-btn'
                                 sx={{
@@ -79,7 +116,9 @@ const ProductPage: NextPage<Props> = ({ producto }) => {
                                     },
                                 }}
                             >
-                                Agregar al carrito
+                                {tempCartProduct.size
+                                    ? 'Agregar al carrito'
+                                    : 'Seleccione una talla'}
                             </Button>
                         )}
 
