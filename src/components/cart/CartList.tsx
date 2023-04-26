@@ -1,4 +1,7 @@
+import { FC, useContext } from 'react';
 import NextLink from 'next/link';
+
+import { CartContext } from '@/context';
 
 import {
     Box,
@@ -10,24 +13,18 @@ import {
     Typography,
 } from '@mui/material';
 
-import { initialData } from '@/database/products';
 import { ItemCounter } from '../ui';
-import { FC } from 'react';
-
-const productsInCart = [
-    initialData.products[0],
-    initialData.products[1],
-    initialData.products[2],
-];
 
 interface Props {
     editable?: boolean;
 }
 
 export const CartList: FC<Props> = ({ editable = false }) => {
+    const { cart } = useContext(CartContext);
+
     return (
         <>
-            {productsInCart.map((product) => (
+            {cart.map((product) => (
                 // Se utiliza container porque va a tener varios elementos iternos
 
                 <Grid container sx={{ mb: 1 }} key={product.slug}>
@@ -45,7 +42,7 @@ export const CartList: FC<Props> = ({ editable = false }) => {
                             <Link>
                                 <CardActionArea>
                                     <CardMedia
-                                        image={`/products/${product.images[0]}`}
+                                        image={`/products/${product.image}`}
                                         component='img'
                                         sx={{ borderRadius: 2 }}
                                     />
@@ -68,9 +65,17 @@ export const CartList: FC<Props> = ({ editable = false }) => {
                             {/* Condicional */}
 
                             {editable ? (
-                                <ItemCounter />
+                                <ItemCounter
+                                    currentValue={product.quantity}
+                                    updatedValue={() => console.log('algo')}
+                                    maxValue={10}
+                                />
                             ) : (
-                                <Typography variant='h6'>3 items</Typography>
+                                <Typography variant='h6'>
+                                    {product.quantity > 1
+                                        ? `${product.quantity} items`
+                                        : `${product.quantity} item`}
+                                </Typography>
                             )}
                         </Box>
                     </Grid>
