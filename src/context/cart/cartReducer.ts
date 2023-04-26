@@ -22,19 +22,17 @@ export const cartReducer = (
             };
 
         case '[Cart] - Add Product':
-            let productsTemp: ICartProduct[] = state.cart.map((product) => {
-                if (
+            let productsTemp = [...state.cart];
+
+            const productFound = state.cart.find(
+                (product) =>
                     product.slug === action.payload.slug &&
                     product.size === action.payload.size
-                ) {
-                    product.quantity += action.payload.quantity;
-                    return product;
-                } else {
-                    return action.payload;
-                }
-            });
+            );
 
-            !state.cart.length && productsTemp.push(action.payload);
+            productFound
+                ? (productFound.quantity -= action.payload.quantity)
+                : productsTemp.push(action.payload);
 
             return {
                 ...state,
