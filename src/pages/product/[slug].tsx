@@ -1,5 +1,6 @@
-import { useState, MouseEvent } from 'react';
+import { useContext, useState } from 'react';
 import { NextPage, GetStaticPaths, GetStaticProps } from 'next';
+import { useRouter } from 'next/router';
 
 import { ShopLayout } from '@/components/layouts';
 
@@ -12,6 +13,7 @@ import {
 
 import { ItemCounter } from '@/components/ui';
 import { ICartProduct, IProduct, ISize } from '@/interfaces';
+import { CartContext } from '@/context';
 
 interface Props {
     producto: IProduct;
@@ -25,6 +27,9 @@ const ProductPage: NextPage<Props> = ({ producto }) => {
 
     // // Realizamos la petición a la api
     // const { product, isLoading } = useProducts(`/products/${query}`);
+
+    const router = useRouter();
+    const { onAddProductCart } = useContext(CartContext);
 
     const [tempCartProduct, setTempCartProduct] = useState<ICartProduct>({
         _id: producto._id,
@@ -49,8 +54,12 @@ const ProductPage: NextPage<Props> = ({ producto }) => {
         });
     };
 
-    const onAddProduct = (product: ICartProduct) => {
-        console.log(product);
+    const onAddProduct = () => {
+        if (!tempCartProduct.size) return;
+
+        onAddProductCart(tempCartProduct);
+
+        // router.push('/cart');
     };
 
     return (
@@ -107,7 +116,7 @@ const ProductPage: NextPage<Props> = ({ producto }) => {
                             />
                         ) : (
                             <Button
-                                onClick={() => onAddProduct(tempCartProduct)}
+                                onClick={onAddProduct}
                                 color='secondary'
                                 className='circular-btn'
                                 sx={{

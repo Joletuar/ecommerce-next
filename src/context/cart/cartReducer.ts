@@ -20,6 +20,27 @@ export const cartReducer = (
             return {
                 ...state,
             };
+
+        case '[Cart] - Add Product':
+            let productsTemp: ICartProduct[] = state.cart.map((product) => {
+                if (
+                    product.slug === action.payload.slug &&
+                    product.size === action.payload.size
+                ) {
+                    product.quantity += action.payload.quantity;
+                    return product;
+                } else {
+                    return action.payload;
+                }
+            });
+
+            !state.cart.length && productsTemp.push(action.payload);
+
+            return {
+                ...state,
+                cart: [...productsTemp],
+            };
+
         default:
             return state;
     }

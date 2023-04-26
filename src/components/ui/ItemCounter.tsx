@@ -15,12 +15,12 @@ export const ItemCounter: FC<Props> = ({
     maxValue,
 }) => {
     const onChangeValue = (signo: string) => {
-        if (currentValue >= maxValue || currentValue <= 0) return; 
-
         if (signo === '-') {
-            updatedValue(currentValue--);
+            if (currentValue === 1) return;
+            updatedValue(currentValue - 1);
         } else {
-            updatedValue(currentValue++);
+            if (currentValue >= maxValue) return;
+            updatedValue(currentValue + 1);
         }
     };
 
