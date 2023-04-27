@@ -14,20 +14,30 @@ import {
 } from '@mui/material';
 
 import { ItemCounter } from '../ui';
+import { ICartProduct } from '@/interfaces';
 
 interface Props {
     editable?: boolean;
 }
 
-export const CartList: FC<Props> = ({ editable = false }) => {
-    const { cart } = useContext(CartContext);
+export const CartList: FC<Props> = ({ editable = true }) => {
+    const { cart, updatedCartQuantity } = useContext(CartContext);
+
+    const onNewQuantityValue = (product: ICartProduct, newQuantity: number) => {
+        product.quantity = newQuantity;
+        updatedCartQuantity(product);
+    };
 
     return (
         <>
             {cart.map((product) => (
                 // Se utiliza container porque va a tener varios elementos iternos
 
-                <Grid container sx={{ mb: 1 }} key={product.slug}>
+                <Grid
+                    container
+                    sx={{ mb: 1 }}
+                    key={`${product.slug}${product.size}`}
+                >
                     {/* Item correspondiente a las images de los productos del carrito */}
 
                     {/* A los Grid "item" siempre se les debe de definir el num. columnas que va a ocupar dentro del Grid */}
@@ -35,7 +45,7 @@ export const CartList: FC<Props> = ({ editable = false }) => {
                         {/* TODO: llevar a la pag. del producto */}
 
                         <NextLink
-                            href={'/product/slug'}
+                            href={`/product/${product.slug}`}
                             passHref
                             legacyBehavior
                         >
@@ -59,7 +69,7 @@ export const CartList: FC<Props> = ({ editable = false }) => {
                             </Typography>
 
                             <Typography variant='body1'>
-                                Talla: <strong>M</strong>
+                                Talla: <strong>{product.size}</strong>
                             </Typography>
 
                             {/* Condicional */}
@@ -67,7 +77,9 @@ export const CartList: FC<Props> = ({ editable = false }) => {
                             {editable ? (
                                 <ItemCounter
                                     currentValue={product.quantity}
-                                    updatedValue={() => console.log('algo')}
+                                    updatedValue={(value) =>
+                                        onNewQuantityValue(product, value)
+                                    }
                                     maxValue={10}
                                 />
                             ) : (

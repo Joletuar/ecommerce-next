@@ -8,6 +8,10 @@ type CartActionType =
       }
     | {
           type: '[Cart] - Add Product';
+          payload: ICartProduct[];
+      }
+    | {
+          type: '[Cart] - Change cart quantity';
           payload: ICartProduct;
       };
 
@@ -19,25 +23,24 @@ export const cartReducer = (
         case '[Cart] - LoadCart from cookies | storage':
             return {
                 ...state,
-                cart: [...action.payload]
+                cart: [...action.payload],
             };
 
         case '[Cart] - Add Product':
-            let productsTemp = [...state.cart];
-
-            const productFound = state.cart.find(
-                (product) =>
-                    product.slug === action.payload.slug &&
-                    product.size === action.payload.size
-            );
-
-            productFound
-                ? (productFound.quantity -= action.payload.quantity)
-                : productsTemp.push(action.payload);
-
             return {
                 ...state,
-                cart: [...productsTemp],
+                cart: [...action.payload],
+            };
+
+        case '[Cart] - Change cart quantity':
+            return {
+                ...state,
+                cart: state.cart.map((product) => {
+                    if (product._id != action.payload._id) return product;
+                    if (product.size != action.payload.size) return product;
+
+                    return action.payload;
+                }),
             };
 
         default:

@@ -43,15 +43,15 @@ const ProductPage: NextPage<Props> = ({ producto }) => {
 
     // Sobreescribimos o creamos la propiedad size con la talla seleccionada
     const onHandleSelectSize = (size: ISize) => {
-        setTempCartProduct({ ...tempCartProduct, size });
+        setTempCartProduct((oldState) => ({ ...oldState, size }));
     };
 
     // Actualizamos el valor del contador
     const updatedValue = (quantity: number) => {
-        setTempCartProduct({
-            ...tempCartProduct,
+        setTempCartProduct((oldState) => ({
+            ...oldState,
             quantity,
-        });
+        }));
     };
 
     const onAddProduct = () => {
@@ -59,7 +59,7 @@ const ProductPage: NextPage<Props> = ({ producto }) => {
 
         onAddProductCart(tempCartProduct);
 
-        // router.push('/cart');
+        router.push('/cart');
     };
 
     return (
