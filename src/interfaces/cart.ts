@@ -12,3 +12,10 @@ export interface ICartProduct {
     gender: 'men' | 'women' | 'kid' | 'unisex';
     quantity: number;
 }
+
+export interface ICartOrder {
+    quantity: number;
+    subtotal: number;
+    impuesto: number;
+    total: number;
+}

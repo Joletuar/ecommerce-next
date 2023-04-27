@@ -1,20 +1,28 @@
 import { FC, useEffect, useReducer } from 'react';
 import { CartContext, cartReducer } from './';
-import { ICartProduct, IProduct } from '@/interfaces';
+import { ICartOrder, ICartProduct } from '@/interfaces';
 
 import Cookie from 'js-cookie';
 
 export interface CartState {
     cart: ICartProduct[];
+    order: ICartOrder;
 }
 
 const CART_INITIAL_STATE: CartState = {
     cart: [],
+    order: {
+        quantity: 0,
+        subtotal: 0,
+        impuesto: 0,
+        total: 0,
+    },
 };
 
 interface Props {
     children?: JSX.Element;
 }
+
 export const CartProvider: FC<Props> = ({ children }) => {
     const [state, dispatch] = useReducer(cartReducer, CART_INITIAL_STATE);
 
@@ -43,6 +51,36 @@ export const CartProvider: FC<Props> = ({ children }) => {
 
         // Almacenamos la cookie con el nombre "cart"
         Cookie.set('cart', JSON.stringify(state.cart)); // Lo serializamos porque dentro de las cokkies no se puden almacenar objetos, solo strings
+    }, [state.cart]);
+
+    useEffect(() => {
+        if (!state.cart.length) return;
+
+        // Obtnemos la cantidad de los productos del carrito
+        const quantity = state.cart.reduce(
+            (acumulador, currentValue) => acumulador + currentValue.quantity,
+            0
+        );
+
+        // Obtnemos el subotal
+        const subtotal = state.cart.reduce(
+            (acumulador, currentValue) =>
+                acumulador + currentValue.price * currentValue.quantity,
+            0
+        );
+
+        // Obtnemos el valor del impuesto del subtotal
+        const impuesto =
+            subtotal * Number(process.env.NEXT_PUBLIC_TAX_RATE || 0.15);
+
+        // Obtnemos el total
+        const total = subtotal + impuesto;
+
+        // Realizamos la accion de actualizar los valores
+        dispatch({
+            type: '[Cart] - Update order values',
+            payload: { quantity, subtotal, impuesto, total },
+        });
     }, [state.cart]);
 
     const onAddProductCart = (product: ICartProduct) => {
@@ -87,6 +125,10 @@ export const CartProvider: FC<Props> = ({ children }) => {
         dispatch({ type: '[Cart] - Change cart quantity', payload: product });
     };
 
+    const deleteCartProduct = (product: ICartProduct) => {
+        dispatch({ type: '[Cart] - Remove cart product', payload: product });
+    };
+
     return (
         <CartContext.Provider
             value={{
@@ -95,6 +137,7 @@ export const CartProvider: FC<Props> = ({ children }) => {
                 // Métodos
                 onAddProductCart,
                 updatedCartQuantity,
+                deleteCartProduct,
             }}
         >
             {children}

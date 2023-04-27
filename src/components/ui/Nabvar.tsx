@@ -3,7 +3,7 @@ import { useContext, useState } from 'react';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 
-import { UiContext } from '@/context';
+import { CartContext, UiContext } from '@/context';
 
 import Toolbar from '@mui/material/Toolbar';
 import AppBar from '@mui/material/AppBar';
@@ -25,6 +25,9 @@ export const Nabvar = () => {
     const { pathname, push } = useRouter();
 
     const { toggleSideMenu } = useContext(UiContext);
+    const {
+        order: { quantity },
+    } = useContext(CartContext);
 
     const [searchTerm, setSearchTerm] = useState('');
     const [isSearchVisible, setIsSearchVisible] = useState(false);
@@ -113,10 +116,6 @@ export const Nabvar = () => {
 
                 {/* Pantallas grandes */}
 
-                {/* <IconButton>
-                    <SearchOutlined />
-                </IconButton> */}
-
                 {isSearchVisible ? (
                     <Input
                         sx={{
@@ -173,7 +172,10 @@ export const Nabvar = () => {
                     <Link>
                         <IconButton>
                             {/* El Badge permite generar un pequeño decorador en la parte superior derecha de su hijo */}
-                            <Badge badgeContent={2} color='secondary'>
+                            <Badge
+                                badgeContent={quantity > 9 ? '+9' : quantity}
+                                color='secondary'
+                            >
                                 <ShoppingCartCheckoutOutlined />
                             </Badge>
                         </IconButton>

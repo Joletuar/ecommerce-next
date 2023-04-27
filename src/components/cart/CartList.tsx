@@ -21,12 +21,17 @@ interface Props {
 }
 
 export const CartList: FC<Props> = ({ editable = true }) => {
-    const { cart, updatedCartQuantity } = useContext(CartContext);
+    const { cart, updatedCartQuantity, deleteCartProduct } =
+        useContext(CartContext);
 
     // Función que se encarga de actualizar la cantidad en lista de productos
     const onNewQuantityValue = (product: ICartProduct, newQuantity: number) => {
         product.quantity = newQuantity;
         updatedCartQuantity(product);
+    };
+
+    const onDeleteProductCart = (product: ICartProduct) => {
+        deleteCartProduct(product);
     };
 
     return (
@@ -109,7 +114,11 @@ export const CartList: FC<Props> = ({ editable = true }) => {
                         {/* Editable */}
 
                         {editable && (
-                            <Button color='error' variant='text'>
+                            <Button
+                                color='error'
+                                variant='text'
+                                onClick={() => onDeleteProductCart(product)}
+                            >
                                 Borrar
                             </Button>
                         )}
