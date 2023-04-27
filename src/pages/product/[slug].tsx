@@ -19,14 +19,11 @@ interface Props {
     producto: IProduct;
 }
 
+// No se acostumbra a generar esta páginas usando CSR, dado que esto no tiene SEO
+
 const ProductPage: NextPage<Props> = ({ producto }) => {
-    // No se acostumbra a generar esta páginas así, dado que esto no tiene SEO
-
-    // // Obtenemos los parametros de ruta
+    // Obtenemos los parametros de ruta
     // const { query } = useRouter();
-
-    // // Realizamos la petición a la api
-    // const { product, isLoading } = useProducts(`/products/${query}`);
 
     const router = useRouter();
     const { onAddProductCart } = useContext(CartContext);
@@ -54,6 +51,7 @@ const ProductPage: NextPage<Props> = ({ producto }) => {
         }));
     };
 
+    // Agregamos un nuevo producto solo si ya eligió una talla
     const onAddProduct = () => {
         if (!tempCartProduct.size) return;
 

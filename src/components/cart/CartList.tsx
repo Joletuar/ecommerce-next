@@ -23,6 +23,7 @@ interface Props {
 export const CartList: FC<Props> = ({ editable = true }) => {
     const { cart, updatedCartQuantity } = useContext(CartContext);
 
+    // Función que se encarga de actualizar la cantidad en lista de productos
     const onNewQuantityValue = (product: ICartProduct, newQuantity: number) => {
         product.quantity = newQuantity;
         updatedCartQuantity(product);

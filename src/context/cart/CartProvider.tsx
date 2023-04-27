@@ -20,6 +20,7 @@ export const CartProvider: FC<Props> = ({ children }) => {
 
     useEffect(() => {
         try {
+            // Obtenemos las cookies, si existen las serializamos, sino entonces retornamos un array vacío
             const cookiesProduct = Cookie.get('cart')
                 ? JSON.parse(Cookie.get('cart')!)
                 : [];
@@ -37,43 +38,37 @@ export const CartProvider: FC<Props> = ({ children }) => {
     }, []);
 
     useEffect(() => {
-        //Establecemos el nombre de la cookie
-
+        // Verificamos que no esté vacío
         if (!state.cart.length) return;
 
+        // Almacenamos la cookie con el nombre "cart"
         Cookie.set('cart', JSON.stringify(state.cart)); // Lo serializamos porque dentro de las cokkies no se puden almacenar objetos, solo strings
     }, [state.cart]);
 
     const onAddProductCart = (product: ICartProduct) => {
-        // let productsTemp = [...state.cart];
-
-        // const productFound = state.cart.find(
-        //     (product) =>
-        //         product.slug === producto.slug && product.size === producto.size
-        // );
-
-        // productFound
-        //     ? (productFound.quantity += producto.quantity)
-        //     : productsTemp.push(producto);
-
-        // dispatch({ type: '[Cart] - Add Product', payload: productsTemp });
-
+        // Verificamos que exista el productos
         const productInCart = state.cart.some((p) => p._id === product._id);
+
+        // Si no existe lo agregamos
         if (!productInCart)
             return dispatch({
                 type: '[Cart] - Add Product',
                 payload: [...state.cart, product],
             });
 
+        // Si existe, verificamos si tiene ya la talla agregada
         const productInCartButDifferent = state.cart.some(
             (p) => p._id === product._id && p.size === product.size
         );
+
+        // Si no la tiene la agregamos
         if (!productInCartButDifferent)
             return dispatch({
                 type: '[Cart] - Add Product',
                 payload: [...state.cart, product],
             });
 
+        // Actualizamos el quantity del producto si existe ya una talla que coincida
         const updatedProduct = state.cart.map((p) => {
             if (!(p._id === product._id)) return p;
             if (!(p.size === product.size)) return p; // Acumulamos la cantidad
