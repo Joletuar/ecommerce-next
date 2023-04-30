@@ -77,7 +77,7 @@ export const Nabvar = () => {
                                         : 'info'
                                 }
                             >
-                                Men's
+                                Hombres
                             </Button>
                         </Link>
                     </NextLink>
@@ -91,7 +91,7 @@ export const Nabvar = () => {
                                         : 'info'
                                 }
                             >
-                                Women's
+                                Mujeres
                             </Button>
                         </Link>
                     </NextLink>
@@ -105,7 +105,7 @@ export const Nabvar = () => {
                                         : 'info'
                                 }
                             >
-                                Kids
+                                Niños
                             </Button>
                         </Link>
                     </NextLink>

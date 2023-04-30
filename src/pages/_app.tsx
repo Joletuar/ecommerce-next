@@ -5,7 +5,7 @@ import { lightTheme } from '@/themes';
 import { ThemeProvider } from '@mui/material';
 import CssBaseline from '@mui/material/CssBaseline';
 
-import { CartProvider, UiProvider } from '@/context';
+import { AuthProvider, CartProvider, UiProvider } from '@/context';
 
 export default function App({ Component, pageProps }: AppProps) {
     return (
@@ -17,12 +17,14 @@ export default function App({ Component, pageProps }: AppProps) {
                 }}
             >
                 <UiProvider>
-                    <CartProvider>
-                        <ThemeProvider theme={lightTheme}>
-                            <CssBaseline />
-                            <Component {...pageProps} />
-                        </ThemeProvider>
-                    </CartProvider>
+                    <AuthProvider>
+                        <CartProvider>
+                            <ThemeProvider theme={lightTheme}>
+                                <CssBaseline />
+                                <Component {...pageProps} />
+                            </ThemeProvider>
+                        </CartProvider>
+                    </AuthProvider>
                 </UiProvider>
             </SWRConfig>
         </>

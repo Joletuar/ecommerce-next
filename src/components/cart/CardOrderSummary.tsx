@@ -16,7 +16,9 @@ export const CardOrderSummary = () => {
 
             <Grid item xs={6} display='flex' justifyContent='end'>
                 <Typography>
-                    {order.quantity > 1 ? 'productos' : 'producto'}
+                    {order.quantity > 1
+                        ? order.quantity + ' productos'
+                        : order.quantity + ' producto'}
                 </Typography>
             </Grid>
 
