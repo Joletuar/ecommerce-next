@@ -4,6 +4,7 @@ import { createContext } from 'react';
 export interface ContextProps {
     cart: ICartProduct[];
     order: ICartOrder;
+    isLoaded: boolean;
 
     // Métodos
     onAddProductCart: (producto: ICartProduct) => void;

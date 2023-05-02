@@ -5,11 +5,13 @@ import { ICartOrder, ICartProduct } from '@/interfaces';
 import Cookie from 'js-cookie';
 
 export interface CartState {
+    isLoaded: boolean;
     cart: ICartProduct[];
     order: ICartOrder;
 }
 
 const CART_INITIAL_STATE: CartState = {
+    isLoaded: false,
     cart: [],
     order: {
         quantity: 0,
