@@ -28,20 +28,51 @@ type FormData = {
     phone: string;
 };
 
+// Función que obtiene las cookies con la info de la dirección
+const getAddressFromCookies = (): FormData => {
+    return {
+        firtsName: Cookie.get('firtsName') || '',
+        lastName: Cookie.get('lastName') || '',
+        address: Cookie.get('address') || '',
+        address2: Cookie.get('address2') || '',
+        zip: Cookie.get('zip') || '',
+        city: Cookie.get('city') || '',
+        country: Cookie.get('country') || '',
+        phone: Cookie.get('phone') || '',
+    };
+};
+
 const AddressPage = () => {
     const {
         register, // Con esto enlazamos los campos
         handleSubmit, // Se encarga que la página haga un full refresh. Necesita de un función a ejecutar si todo va bien
         formState: { errors }, // Retorna un objeto con cada uno de los inputs del form y su respectivo error
-    } = useForm<FormData>();
+    } = useForm<FormData>({
+        defaultValues: getAddressFromCookies(), // Se puede pasar un valor inicial
+    });
 
     const router = useRouter();
 
     // Esta función va recbir todos los campos del formulario
-    const onChekData = async (data: FormData) => {
-        Cookie.set('address', JSON.stringify(data));
-
-        console.log(data);
+    const onChekData = async ({
+        firtsName,
+        lastName,
+        address,
+        address2 = '',
+        zip,
+        city,
+        country,
+        phone,
+    }: FormData) => {
+        // Guardamos en las cookies campo por campo, porque no se puede guardar un objeto ya que tira error
+        Cookie.set('firtsName', firtsName);
+        Cookie.set('lastName', lastName);
+        Cookie.set('address', address);
+        Cookie.set('address2', address2);
+        Cookie.set('zip', zip);
+        Cookie.set('city', city);
+        Cookie.set('country', country);
+        Cookie.set('phone', phone);
 
         // router.push("/")
     };
@@ -111,11 +142,9 @@ const AddressPage = () => {
                             fullWidth
                             variant='filled'
                             type='text'
-                            {...register('address', {
+                            {...register('address2', {
                                 // El primer argumento corresponde al campo que vamos a enlazar del FormData
                             })}
-                            error={!!errors.address} // Esta propiedad hace que el input se ponga de color rojo
-                            helperText={errors.address?.message} // Esta propieda muestra un pequeño mensaje debajo del input con el texto que se le pase
                         />
                     </Grid>
 
