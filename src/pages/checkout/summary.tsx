@@ -98,9 +98,9 @@ const SummaryPage = () => {
 
                             <Typography>{shippignAddress?.city}</Typography>
 
-                            <Typography>{countryNameMemo?.name}</Typography>
-
-                            <Typography>{shippignAddress?.zip}</Typography>
+                            <Typography>
+                                {countryNameMemo?.name}, {shippignAddress?.zip}
+                            </Typography>
 
                             <Typography>{shippignAddress?.phone}</Typography>
 

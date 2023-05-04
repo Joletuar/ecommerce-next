@@ -15,7 +15,7 @@ import {
     TextField,
     Typography,
 } from '@mui/material';
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import { CartContext } from '@/context';
 
 type FormData = {
@@ -44,6 +44,9 @@ const getAddressFromCookies = (): FormData => {
 };
 
 const AddressPage = () => {
+    const [countryCookie, setCountryCookie] = useState(
+        Cookie.get('country') || 'ECU'
+    );
     const {
         register, // Con esto enlazamos los campos
         handleSubmit, // Se encarga que la página haga un full refresh. Necesita de un función a ejecutar si todo va bien
@@ -78,7 +81,7 @@ const AddressPage = () => {
             phone,
         });
 
-        router.push('/');
+        router.push('/checkout/summary');
     };
 
     return (
@@ -189,9 +192,14 @@ const AddressPage = () => {
                             {/* Select: corresponde a un componente que nos permite crear
                         un menú desplegable con diferentes valore */}
                             <TextField
+                                select
                                 variant='filled'
                                 label='País'
-                                defaultValue={Cookie.get('country') || 'ECU'}
+                                {...register('country')}
+                                value={countryCookie}
+                                onChange={(e) =>
+                                    setCountryCookie(e.target.value)
+                                }
                             >
                                 {countries.map((country) => (
                                     // MenuItem: es un componente que corresponde a un itemn dentro del menu desplegable
