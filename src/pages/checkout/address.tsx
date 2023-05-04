@@ -12,10 +12,11 @@ import {
     FormControl,
     Grid,
     MenuItem,
-    Select,
     TextField,
     Typography,
 } from '@mui/material';
+import { useContext } from 'react';
+import { CartContext } from '@/context';
 
 type FormData = {
     firtsName: string;
@@ -51,6 +52,8 @@ const AddressPage = () => {
         defaultValues: getAddressFromCookies(), // Se puede pasar un valor inicial
     });
 
+    const { updateAddress } = useContext(CartContext);
+
     const router = useRouter();
 
     // Esta función va recbir todos los campos del formulario
@@ -64,17 +67,18 @@ const AddressPage = () => {
         country,
         phone,
     }: FormData) => {
-        // Guardamos en las cookies campo por campo, porque no se puede guardar un objeto ya que tira error
-        Cookie.set('firtsName', firtsName);
-        Cookie.set('lastName', lastName);
-        Cookie.set('address', address);
-        Cookie.set('address2', address2);
-        Cookie.set('zip', zip);
-        Cookie.set('city', city);
-        Cookie.set('country', country);
-        Cookie.set('phone', phone);
+        updateAddress({
+            firtsName,
+            lastName,
+            address,
+            address2,
+            zip,
+            city,
+            country,
+            phone,
+        });
 
-        // router.push("/")
+        router.push('/');
     };
 
     return (
@@ -184,7 +188,11 @@ const AddressPage = () => {
                         <FormControl fullWidth>
                             {/* Select: corresponde a un componente que nos permite crear
                         un menú desplegable con diferentes valore */}
-                            <Select variant='filled' label='País' value='ECU'>
+                            <TextField
+                                variant='filled'
+                                label='País'
+                                defaultValue={Cookie.get('country') || 'ECU'}
+                            >
                                 {countries.map((country) => (
                                     // MenuItem: es un componente que corresponde a un itemn dentro del menu desplegable
                                     <MenuItem
@@ -194,7 +202,7 @@ const AddressPage = () => {
                                         {country.name}
                                     </MenuItem>
                                 ))}
-                            </Select>
+                            </TextField>
                         </FormControl>
                     </Grid>
 

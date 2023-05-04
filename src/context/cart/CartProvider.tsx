@@ -4,10 +4,22 @@ import { ICartOrder, ICartProduct } from '@/interfaces';
 
 import Cookie from 'js-cookie';
 
+export interface shippignAddress {
+    firtsName: string;
+    lastName: string;
+    address: string;
+    address2?: string;
+    zip: string;
+    city: string;
+    country: string;
+    phone: string;
+}
+
 export interface CartState {
     isLoaded: boolean;
     cart: ICartProduct[];
     order: ICartOrder;
+    shippignAddress?: shippignAddress;
 }
 
 const CART_INITIAL_STATE: CartState = {
@@ -19,6 +31,7 @@ const CART_INITIAL_STATE: CartState = {
         impuesto: 0,
         total: 0,
     },
+    shippignAddress: undefined,
 };
 
 interface Props {
@@ -28,6 +41,7 @@ interface Props {
 export const CartProvider: FC<Props> = ({ children }) => {
     const [state, dispatch] = useReducer(cartReducer, CART_INITIAL_STATE);
 
+    // Cargamos la cookies del carrito
     useEffect(() => {
         try {
             // Obtenemos las cookies, si existen las serializamos, sino entonces retornamos un array vacío
@@ -47,6 +61,7 @@ export const CartProvider: FC<Props> = ({ children }) => {
         }
     }, []);
 
+    // Actualizamos las cookies del carrito cuando se modifique un producto
     useEffect(() => {
         // Verificamos que no esté vacío
         if (!state.cart.length) return;
@@ -55,6 +70,7 @@ export const CartProvider: FC<Props> = ({ children }) => {
         Cookie.set('cart', JSON.stringify(state.cart)); // Lo serializamos porque dentro de las cokkies no se puden almacenar objetos, solo strings
     }, [state.cart]);
 
+    // Modificamos las cantidades de los totales cuando se modifique un producto
     useEffect(() => {
         if (!state.cart.length) return;
 
@@ -85,6 +101,45 @@ export const CartProvider: FC<Props> = ({ children }) => {
         });
     }, [state.cart]);
 
+    // Función que carga el shippingAddress de las cookies y las guarda en el contexto
+    useEffect(() => {
+        if (Cookie.get('firtsName')) {
+            const addressCookies = {
+                firtsName: Cookie.get('firtsName') || '',
+                lastName: Cookie.get('lastName') || '',
+                address: Cookie.get('address') || '',
+                address2: Cookie.get('address2') || '',
+                zip: Cookie.get('zip') || '',
+                city: Cookie.get('city') || '',
+                country: Cookie.get('country') || '',
+                phone: Cookie.get('phone') || '',
+            };
+
+            dispatch({
+                type: '[Cart] - Load address from cookies',
+                payload: addressCookies,
+            });
+        }
+    }, []);
+
+    // Actualizar shippign address
+    const updateAddress = (address: shippignAddress) => {
+        // Guardamos en las cookies campo por campo, porque no se puede guardar un objeto ya que tira error
+        Cookie.set('firtsName', address.firtsName);
+        Cookie.set('lastName', address.lastName);
+        Cookie.set('address', address.address);
+        Cookie.set('address2', address.address2 || '');
+        Cookie.set('zip', address.zip);
+        Cookie.set('city', address.city);
+        Cookie.set('country', address.country);
+        Cookie.set('phone', address.phone);
+        dispatch({
+            type: '[Cart] - Update address from cookies',
+            payload: address,
+        });
+    };
+
+    // Agregar un producto
     const onAddProductCart = (product: ICartProduct) => {
         // Verificamos que exista el productos
         const productInCart = state.cart.some((p) => p._id === product._id);
@@ -123,10 +178,12 @@ export const CartProvider: FC<Props> = ({ children }) => {
         });
     };
 
+    // Actualizar los totales de las cantidades
     const updatedCartQuantity = (product: ICartProduct) => {
         dispatch({ type: '[Cart] - Change cart quantity', payload: product });
     };
 
+    // Eliminar un producto del carrito
     const deleteCartProduct = (product: ICartProduct) => {
         dispatch({ type: '[Cart] - Remove cart product', payload: product });
     };
@@ -140,6 +197,7 @@ export const CartProvider: FC<Props> = ({ children }) => {
                 onAddProductCart,
                 updatedCartQuantity,
                 deleteCartProduct,
+                updateAddress,
             }}
         >
             {children}

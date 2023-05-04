@@ -1,6 +1,8 @@
+import { useContext, useMemo } from 'react';
 import NextLink from 'next/link';
 
 import { CardOrderSummary, CartList } from '@/components/cart';
+import { CartContext } from '@/context';
 
 import { ShopLayout } from '@/components/layouts';
 
@@ -14,8 +16,23 @@ import {
     Link,
     Typography,
 } from '@mui/material';
+import { countries } from '@/utils';
 
 const SummaryPage = () => {
+    const { shippignAddress, order } = useContext(CartContext);
+
+    if (!shippignAddress) {
+        return <></>;
+    }
+
+    const countryNameMemo = useMemo(
+        () =>
+            countries.find(
+                (country) => country.code === shippignAddress?.country
+            ),
+        []
+    );
+
     return (
         <ShopLayout
             title='Resumen'
@@ -45,10 +62,13 @@ const SummaryPage = () => {
                     <Card className='summary-card'>
                         <CardContent>
                             <Typography variant='h2'>
-                                Resumen (3 productos)
-                                {/* Divider: es una linea divisora */}
+                                Resumen{' '}
+                                {order.quantity > 1
+                                    ? `${order.quantity} productos`
+                                    : `${order.quantity} producto`}
                             </Typography>
 
+                            {/* Divider: es una linea divisora */}
                             <Divider sx={{ my: 1 }} />
 
                             <Box display='flex' justifyContent='end'>
@@ -68,17 +88,23 @@ const SummaryPage = () => {
                                 Dirección de Entrega
                             </Typography>
 
-                            <Typography>333 Alguna parte</Typography>
+                            <Typography>
+                                {`${shippignAddress.address}, ${
+                                    shippignAddress.address2
+                                        ? shippignAddress.address2
+                                        : ''
+                                }`}
+                            </Typography>
 
-                            <Typography>Gye, Ecuador</Typography>
+                            <Typography>{shippignAddress?.city}</Typography>
 
-                            <Typography>Ecuador</Typography>
+                            <Typography>{countryNameMemo?.name}</Typography>
 
-                            <Typography>11111</Typography>
+                            <Typography>{shippignAddress?.zip}</Typography>
 
-                            <Typography>+593 09784546454</Typography>
+                            <Typography>{shippignAddress?.phone}</Typography>
 
-                            <Typography>Johan Tuarez</Typography>
+                            <Typography>{`${shippignAddress?.firtsName} ${shippignAddress?.lastName}`}</Typography>
 
                             <Divider sx={{ my: 1 }} />
 
