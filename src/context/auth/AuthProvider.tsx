@@ -1,5 +1,6 @@
 import { FC, useEffect, useReducer } from 'react';
 import { useRouter } from 'next/router';
+import { useSession } from 'next-auth/react';
 
 import { AuthContext, authReducer } from '.';
 import { IUser } from '@/interfaces';
@@ -23,44 +24,54 @@ interface Props {
 }
 export const AuthProvider: FC<Props> = ({ children }) => {
     const [state, dispatch] = useReducer(authReducer, AUTH_INITIAL_STATE);
+
+    const { data, status } = useSession();
+
     const router = useRouter();
 
-    // Revalidación del token
-
     useEffect(() => {
-        const validateToken = async () => {
-            if (!Cookies.get('token')) return;
+        // Con el status podemos saber si estamos: loading, authenticated o unauthenticated
+        if (status === 'authenticated') {
+            // dispatch({ type: '[Auth] - Login', payload: data.user as IUser });
+            console.log(data);
+        }
+    }, [status, data]);
 
-            try {
-                // Realizamos la petición a nuestro edpoint
-                const { data } = await tesloApi.get<{
-                    user: IUser;
-                    token: string;
-                    ok: boolean;
-                }>('/user/validate-token');
+    // Revalidación del token
+    // useEffect(() => {
+    //     const validateToken = async () => {
+    //         if (!Cookies.get('token')) return;
 
-                // Obtenemos los datos
-                const { user, token, ok } = data;
+    //         try {
+    //             // Realizamos la petición a nuestro edpoint
+    //             const { data } = await tesloApi.get<{
+    //                 user: IUser;
+    //                 token: string;
+    //                 ok: boolean;
+    //             }>('/user/validate-token');
 
-                if (!ok) {
-                    return;
-                }
+    //             // Obtenemos los datos
+    //             const { user, token, ok } = data;
 
-                // Guardamos en las cookies el token nuevo
-                Cookies.set('token', token);
+    //             if (!ok) {
+    //                 return;
+    //             }
 
-                dispatch({
-                    type: '[Auth] - Login',
-                    payload: user,
-                });
-            } catch (e) {
-                console.log(e);
-                Cookies.remove('token');
-            }
-        };
+    //             // Guardamos en las cookies el token nuevo
+    //             Cookies.set('token', token);
 
-        validateToken();
-    }, []);
+    //             dispatch({
+    //                 type: '[Auth] - Login',
+    //                 payload: user,
+    //             });
+    //         } catch (e) {
+    //             console.log(e);
+    //             Cookies.remove('token');
+    //         }
+    //     };
+
+    //     validateToken();
+    // }, []);
 
     // Logeo de usuario
     const loginUser = async (
@@ -157,6 +168,14 @@ export const AuthProvider: FC<Props> = ({ children }) => {
     const logoutUser = () => {
         Cookies.remove('token');
         Cookies.remove('cart');
+        Cookies.remove('firtsName');
+        Cookies.remove('lastName');
+        Cookies.remove('address');
+        Cookies.remove('address2');
+        Cookies.remove('zip');
+        Cookies.remove('city');
+        Cookies.remove('country');
+        Cookies.remove('phone');
 
         // Mediante esto podemos hacer un full refresh de la aplicación
         // Cuando hacemos esto todo lo que no sea persistente se pierde
