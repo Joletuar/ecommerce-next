@@ -1,6 +1,6 @@
 import { FC, useEffect, useReducer } from 'react';
-import { useRouter } from 'next/router';
-import { useSession } from 'next-auth/react';
+// import { useRouter } from 'next/router';
+import { useSession, signOut } from 'next-auth/react';
 
 import { AuthContext, authReducer } from '.';
 import { IUser } from '@/interfaces';
@@ -27,7 +27,7 @@ export const AuthProvider: FC<Props> = ({ children }) => {
 
     const { data, status } = useSession();
 
-    const router = useRouter();
+    // const router = useRouter();
 
     useEffect(() => {
         // Con el status podemos saber si estamos: loading, authenticated o unauthenticated
@@ -166,7 +166,8 @@ export const AuthProvider: FC<Props> = ({ children }) => {
 
     // Logout de usuario
     const logoutUser = () => {
-        Cookies.remove('token');
+        // Cookies.remove('token');
+
         Cookies.remove('cart');
         Cookies.remove('firtsName');
         Cookies.remove('lastName');
@@ -177,9 +178,12 @@ export const AuthProvider: FC<Props> = ({ children }) => {
         Cookies.remove('country');
         Cookies.remove('phone');
 
+        // Función que realiza la limpieza y reload de la página
+        signOut();
+
         // Mediante esto podemos hacer un full refresh de la aplicación
         // Cuando hacemos esto todo lo que no sea persistente se pierde
-        router.reload();
+        // router.reload();
     };
 
     return (
