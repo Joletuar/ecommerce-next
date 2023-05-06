@@ -1,4 +1,5 @@
-import { useContext, useMemo } from 'react';
+import { useContext, useEffect, useMemo } from 'react';
+import { useRouter } from 'next/router';
 import NextLink from 'next/link';
 
 import { CardOrderSummary, CartList } from '@/components/cart';
@@ -16,10 +17,19 @@ import {
     Link,
     Typography,
 } from '@mui/material';
+
 import { countries } from '@/utils';
+import Cookie from 'js-cookie';
 
 const SummaryPage = () => {
+    const router = useRouter();
     const { shippignAddress, order } = useContext(CartContext);
+
+    useEffect(() => {
+        if (!Cookie.get('firtsName')) {
+            router.push('/checkout/address');
+        }
+    }, [router]);
 
     if (!shippignAddress) {
         return <></>;
@@ -104,7 +114,7 @@ const SummaryPage = () => {
 
                             <Typography>{shippignAddress?.phone}</Typography>
 
-                            <Typography>{`${shippignAddress?.firtsName} ${shippignAddress?.lastName}`}</Typography>
+                            <Typography>{`${shippignAddress?.firstName} ${shippignAddress?.lastName}`}</Typography>
 
                             <Divider sx={{ my: 1 }} />
 

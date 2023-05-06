@@ -5,7 +5,7 @@ import { ICartOrder, ICartProduct } from '@/interfaces';
 import Cookie from 'js-cookie';
 
 export interface shippignAddress {
-    firtsName: string;
+    firstName: string;
     lastName: string;
     address: string;
     address2?: string;
@@ -105,7 +105,7 @@ export const CartProvider: FC<Props> = ({ children }) => {
     useEffect(() => {
         if (Cookie.get('firtsName')) {
             const addressCookies = {
-                firtsName: Cookie.get('firtsName') || '',
+                firstName: Cookie.get('firstName') || '',
                 lastName: Cookie.get('lastName') || '',
                 address: Cookie.get('address') || '',
                 address2: Cookie.get('address2') || '',
@@ -125,7 +125,7 @@ export const CartProvider: FC<Props> = ({ children }) => {
     // Actualizar shippign address
     const updateAddress = (address: shippignAddress) => {
         // Guardamos en las cookies campo por campo, porque no se puede guardar un objeto ya que tira error
-        Cookie.set('firtsName', address.firtsName);
+        Cookie.set('firtsName', address.firstName);
         Cookie.set('lastName', address.lastName);
         Cookie.set('address', address.address);
         Cookie.set('address2', address.address2 || '');

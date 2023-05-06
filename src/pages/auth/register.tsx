@@ -1,8 +1,10 @@
 import { useContext, useState } from 'react';
+import { GetServerSideProps } from 'next';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 
 import { useForm } from 'react-hook-form';
+import { getSession, signIn } from 'next-auth/react';
 
 import { AuthLayout } from '@/components/layouts';
 import {
@@ -17,6 +19,7 @@ import {
 import { validations } from '@/utils';
 import { ErrorOutline } from '@mui/icons-material';
 import { AuthContext } from '@/context';
+import { Providers } from '@/components/ui';
 
 // Tipado de los campos del formulario
 type FormData = {
@@ -26,10 +29,11 @@ type FormData = {
 };
 
 const RegisterPage = () => {
-    const [showError, setShowError] = useState(false);
-    const [message, setMessage] = useState('');
     const router = useRouter();
     const { registerUser } = useContext(AuthContext);
+
+    const [showError, setShowError] = useState(false);
+    const [message, setMessage] = useState('');
 
     const {
         register, // Con este función podemos enlazar los campos
@@ -55,10 +59,17 @@ const RegisterPage = () => {
             }, 2500);
             return;
         }
-        // Si el query viene en la url del login, entonces el destino será dicha ruta
-        const destination = router.query.p?.toLocaleString() || '/';
 
-        router.replace(destination);
+        // Si el query viene en la url del login, entonces el destino será dicha ruta
+        // const destination = router.query.p?.toLocaleString() || '/';
+
+        // router.replace(destination);
+
+        // Función de next auth que se usa para logearse, require de un provider y las opciones, por defecto hace refresh esto
+        await signIn('credentials', {
+            email,
+            password,
+        });
     };
     return (
         <AuthLayout title={'Registrarse'}>
@@ -181,6 +192,10 @@ const RegisterPage = () => {
                                 </Link>
                             </NextLink>
                         </Grid>
+
+                        {/* Sección de providers */}
+
+                        <Providers />
                     </Grid>
                 </Box>
             </form>
@@ -189,3 +204,28 @@ const RegisterPage = () => {
 };
 
 export default RegisterPage;
+
+export const getServerSideProps: GetServerSideProps = async ({
+    req,
+    query,
+}) => {
+    // Con esto poodemos obtenemer la información de la sesión activa
+    const session = await getSession({ req });
+
+    // Obtenemos el query que viene delo login
+    const { p = '/' } = query;
+
+    // Si tenemos un sesión activa redireccionamos al usuario hacia la página principal o hacia la dirección que tenga el query
+    if (session) {
+        return {
+            redirect: {
+                destination: p.toLocaleString(),
+                permanent: false,
+            },
+        };
+    }
+
+    return {
+        props: {},
+    };
+};

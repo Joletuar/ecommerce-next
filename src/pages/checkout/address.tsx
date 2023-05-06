@@ -19,7 +19,7 @@ import { useContext, useState } from 'react';
 import { CartContext } from '@/context';
 
 type FormData = {
-    firtsName: string;
+    firstName: string;
     lastName: string;
     address: string;
     address2?: string;
@@ -32,7 +32,7 @@ type FormData = {
 // Función que obtiene las cookies con la info de la dirección
 const getAddressFromCookies = (): FormData => {
     return {
-        firtsName: Cookie.get('firtsName') || '',
+        firstName: Cookie.get('firstName') || '',
         lastName: Cookie.get('lastName') || '',
         address: Cookie.get('address') || '',
         address2: Cookie.get('address2') || '',
@@ -44,9 +44,11 @@ const getAddressFromCookies = (): FormData => {
 };
 
 const AddressPage = () => {
+    const router = useRouter();
     const [countryCookie, setCountryCookie] = useState(
         Cookie.get('country') || 'ECU'
     );
+
     const {
         register, // Con esto enlazamos los campos
         handleSubmit, // Se encarga que la página haga un full refresh. Necesita de un función a ejecutar si todo va bien
@@ -57,11 +59,9 @@ const AddressPage = () => {
 
     const { updateAddress } = useContext(CartContext);
 
-    const router = useRouter();
-
     // Esta función va recbir todos los campos del formulario
     const onChekData = async ({
-        firtsName,
+        firstName,
         lastName,
         address,
         address2 = '',
@@ -71,7 +71,7 @@ const AddressPage = () => {
         phone,
     }: FormData) => {
         updateAddress({
-            firtsName,
+            firstName,
             lastName,
             address,
             address2,
@@ -104,12 +104,12 @@ const AddressPage = () => {
                             fullWidth
                             variant='filled'
                             type='text'
-                            {...register('firtsName', {
+                            {...register('firstName', {
                                 // El primer argumento corresponde al campo que vamos a enlazar del FormData
                                 required: 'El nombre es obligatorio', // Este es el valor que va aparecer en el campo required del objeto errors
                             })}
-                            error={!!errors.firtsName} // Esta propiedad hace que el input se ponga de color rojo
-                            helperText={errors.firtsName?.message} // Esta propieda muestra un pequeño mensaje debajo del input con el texto que se le pase
+                            error={!!errors.firstName} // Esta propiedad hace que el input se ponga de color rojo
+                            helperText={errors.firstName?.message} // Esta propieda muestra un pequeño mensaje debajo del input con el texto que se le pase
                         />
                     </Grid>
 

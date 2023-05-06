@@ -62,6 +62,7 @@ export const oAuthToDbUser = async (oAuthEmail: string, oAuthName: string) => {
     } catch (error) {
         if (axios.isAxiosError(error)) {
             // Si no existe entonces lo registramos usando los datos que vienen del proveedor que usó para registrarse
+
             if (error.response?.data.message === 'El usuario no existe') {
                 try {
                     // Definimos primero la url y despues el body

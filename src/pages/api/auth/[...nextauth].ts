@@ -47,7 +47,21 @@ export default NextAuth({
         }),
     ],
 
+    // Custom Pages
+
+    // Le decimos a next auth que usaremos una página personaliza para el login y registro
+    pages: {
+        signIn: '/auth/login',
+        newUser: '/auth/register',
+    },
+
     // Callbacks
+
+    session: {
+        maxAge: 2592000, // 30d, el tiempo que durará la sesión
+        strategy: 'jwt', // forma de validar la sessión
+        updateAge: 86400, // 1d, el tiempo que la sessión se revalida/actualiza
+    },
 
     // Por defecto trabaja con JWT si no se especifica nada
     // Aqui se especifica como se firman los jwt, que data irá en el payload, etc
@@ -65,7 +79,6 @@ export default NextAuth({
                             user?.email || '',
                             user?.name || ''
                         );
-                        console.log(token.user);
 
                         break;
 

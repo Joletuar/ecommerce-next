@@ -1,7 +1,10 @@
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/router';
+import { GetServerSideProps } from 'next';
 import NextLink from 'next/link';
+
 import { useForm } from 'react-hook-form';
+import { getSession, signIn } from 'next-auth/react';
 
 import { AuthLayout } from '@/components/layouts';
 import {
@@ -15,7 +18,7 @@ import {
 } from '@mui/material';
 import { validations } from '@/utils';
 import { ErrorOutline } from '@mui/icons-material';
-import { AuthContext } from '@/context';
+import { Providers } from '@/components/ui';
 
 // Tipado de los campos del formulario
 type FormData = {
@@ -24,9 +27,10 @@ type FormData = {
 };
 
 const LoginPage = () => {
-    const [showError, setShowError] = useState(false);
     const router = useRouter();
-    const { loginUser } = useContext(AuthContext);
+    // const { loginUser } = useContext(AuthContext);
+
+    const [showError, setShowError] = useState(false);
 
     const {
         register, // Con este función podemos enlazar los campos
@@ -38,19 +42,25 @@ const LoginPage = () => {
         setShowError(false);
 
         // Realizamos el dispatch de la acción de logeo
-        const isValidLogin = await loginUser(email, password);
+        // const isValidLogin = await loginUser(email, password);
 
         // Si el logeo no es válido mostramos los errores
-        if (!isValidLogin) {
-            setShowError(true);
-            setTimeout(() => setShowError(false), 2500);
-            return;
-        }
+        // if (!isValidLogin) {
+        //     setShowError(true);
+        //     setTimeout(() => setShowError(false), 2500);
+        //     return;
+        // }
 
         // Si el query viene en la url del login, entonces el destino será dicha ruta
-        const destination = router.query.p?.toLocaleString() || '/';
+        // const destination = router.query.p?.toLocaleString() || '/';
 
-        router.replace(destination);
+        // router.replace(destination);
+
+        // Función de next auth que se usa para logearse, require de un provider y las opciones, por defecto hace refresh esto
+        await signIn('credentials', {
+            email,
+            password,
+        });
     };
 
     return (
@@ -147,6 +157,10 @@ const LoginPage = () => {
                                 </Link>
                             </NextLink>
                         </Grid>
+
+                        {/* Sección de logeo con redes sociales */}
+
+                        <Providers />
                     </Grid>
                 </Box>
             </form>
@@ -155,3 +169,28 @@ const LoginPage = () => {
 };
 
 export default LoginPage;
+
+export const getServerSideProps: GetServerSideProps = async ({
+    req,
+    query,
+}) => {
+    // Con esto poodemos obtenemer la información de la sesión activa
+    const session = await getSession({ req });
+
+    // Obtenemos el query que viene delo login
+    const { p = '/' } = query;
+
+    // Si tenemos un sesión activa redireccionamos al usuario hacia la página principal o hacia la dirección que tenga el query
+    if (session) {
+        return {
+            redirect: {
+                destination: p.toLocaleString(),
+                permanent: false,
+            },
+        };
+    }
+
+    return {
+        props: {},
+    };
+};
