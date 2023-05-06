@@ -32,8 +32,9 @@ export const AuthProvider: FC<Props> = ({ children }) => {
     useEffect(() => {
         // Con el status podemos saber si estamos: loading, authenticated o unauthenticated
         if (status === 'authenticated') {
-            // dispatch({ type: '[Auth] - Login', payload: data.user as IUser });
             console.log(data);
+
+            dispatch({ type: '[Auth] - Login', payload: data?.user as IUser });
         }
     }, [status, data]);
 

@@ -6,7 +6,6 @@ import GithubProvider from 'next-auth/providers/github';
 // Dentro de este archivo nosotros podemos añadir configuraciones y los proveedores que queremos utilizar para autenticarnos en nuestra aplicación
 
 export default NextAuth({
-    // Configure one or more authentication providers
     providers: [
         GithubProvider({
             clientId: process.env.GITHUB_ID!,
@@ -42,7 +41,7 @@ export default NextAuth({
                     id: user._id, // Siempre hay que retornar un id, o si no tira error
                     email: user.email,
                     role: user.role,
-                    name: user.role,
+                    name: user.name,
                 };
             },
         }),
@@ -53,7 +52,7 @@ export default NextAuth({
     // Por defecto trabaja con JWT si no se especifica nada
     // Aqui se especifica como se firman los jwt, que data irá en el payload, etc
     callbacks: {
-        // Función que se ejecuta cuando se genera el jwt
+        // Función que se ejecuta cuando se genera el jwt, primero se genera esto antes de la session
         async jwt({ token, account, user }) {
             if (account) {
                 // Seteamos el token que viene de la cuenta
@@ -62,7 +61,12 @@ export default NextAuth({
                 switch (account.type) {
                     // Si utilizo alguna red para autenticarse
                     case 'oauth':
-                        // TODO: crear un usuario o verificar si existe en la bd
+                        token.user = await dbUsers.oAuthToDbUser(
+                            user?.email || '',
+                            user?.name || ''
+                        );
+                        console.log(token.user);
+
                         break;
 
                     // Si el tipo es de credentials el token user será igual al user que viene
@@ -87,4 +91,4 @@ export default NextAuth({
     },
 });
 
-// Cuando usamos un sistema personalizd el type del account será CREDENTIALS, pero cuando es alguna red social es OAUTH
+// Cuando usamos un sistema personaliza el type del account será CREDENTIALS, pero cuando es alguna red social es OAUTH
