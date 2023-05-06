@@ -2,7 +2,7 @@ import { ICartProduct, ICartOrder } from '@/interfaces';
 import { createContext } from 'react';
 import { shippignAddress } from './CartProvider';
 
-export interface ContextProps {
+interface ContextProps {
     cart: ICartProduct[];
     order: ICartOrder;
     isLoaded: boolean;
