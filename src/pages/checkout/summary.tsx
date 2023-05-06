@@ -23,17 +23,13 @@ import Cookie from 'js-cookie';
 
 const SummaryPage = () => {
     const router = useRouter();
-    const { shippignAddress, order } = useContext(CartContext);
+    const { shippignAddress, order, createOrder } = useContext(CartContext);
 
     useEffect(() => {
-        if (!Cookie.get('firtsName')) {
+        if (!Cookie.get('firstName')) {
             router.push('/checkout/address');
         }
     }, [router]);
-
-    if (!shippignAddress) {
-        return <></>;
-    }
 
     const countryNameMemo = useMemo(
         () =>
@@ -42,6 +38,14 @@ const SummaryPage = () => {
             ),
         []
     );
+
+    const handleOrder = async () => {
+        createOrder();
+    };
+
+    if (!shippignAddress) {
+        return <></>;
+    }
 
     return (
         <ShopLayout
@@ -72,10 +76,11 @@ const SummaryPage = () => {
                     <Card className='summary-card'>
                         <CardContent>
                             <Typography variant='h2'>
-                                Resumen{' '}
+                                Resumen (
                                 {order.quantity > 1
                                     ? `${order.quantity} productos`
                                     : `${order.quantity} producto`}
+                                )
                             </Typography>
 
                             {/* Divider: es una linea divisora */}
@@ -98,12 +103,13 @@ const SummaryPage = () => {
                                 Dirección de Entrega
                             </Typography>
 
+                            <Typography>{`${shippignAddress?.firstName} ${shippignAddress?.lastName}`}</Typography>
+
                             <Typography>
-                                {`${shippignAddress.address}, ${
-                                    shippignAddress.address2
-                                        ? shippignAddress.address2
-                                        : ''
-                                }`}
+                                {shippignAddress.address}
+                                {shippignAddress.address2
+                                    ? `, ${shippignAddress.address2}`
+                                    : ''}
                             </Typography>
 
                             <Typography>{shippignAddress?.city}</Typography>
@@ -113,8 +119,6 @@ const SummaryPage = () => {
                             </Typography>
 
                             <Typography>{shippignAddress?.phone}</Typography>
-
-                            <Typography>{`${shippignAddress?.firstName} ${shippignAddress?.lastName}`}</Typography>
 
                             <Divider sx={{ my: 1 }} />
 
@@ -141,6 +145,7 @@ const SummaryPage = () => {
                                                 'rgb(19, 143, 232)',
                                         },
                                     }}
+                                    onClick={handleOrder}
                                 >
                                     Confirmar Orden
                                 </Button>

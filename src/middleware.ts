@@ -1,13 +1,19 @@
-// Este middleware se va a ejecutar siempre antes de que se muestran las páginas de esta ruta
-
 import { NextFetchEvent, NextRequest, NextResponse } from 'next/server';
-import { jwt } from './utils';
 import { getToken } from 'next-auth/jwt';
 
+// Este middleware se va a ejecutar siempre antes de que se muestran las páginas de esta ruta
+// Aqui podemos leer las cookies
 export async function middleware(req: NextRequest, ev: NextFetchEvent) {
-    // Aqui podemos leer las cookies
     // const token = req.cookies.get('token')?.value ?? '';
     // const newUrl = new URL(`/auth/login?p=${req.nextUrl.pathname}`, req.url);
+
+    // try {
+    //     await jwt.isValidToken(token);
+
+    //     return NextResponse.next();
+    // } catch (error) {
+    //     return NextResponse.redirect(newUrl);
+    // }
 
     const newUrl = req.nextUrl.clone();
     newUrl.pathname = '/auth/login';
@@ -26,14 +32,6 @@ export async function middleware(req: NextRequest, ev: NextFetchEvent) {
 
     // Si no lo redirigimos al login
     return NextResponse.redirect(newUrl);
-
-    // try {
-    //     await jwt.isValidToken(token);
-
-    //     return NextResponse.next();
-    // } catch (error) {
-    //     return NextResponse.redirect(newUrl);
-    // }
 }
 
 // Aqui podemos especificar las rutas donde solo se ejecutará este middleware

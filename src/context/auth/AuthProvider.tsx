@@ -170,7 +170,7 @@ export const AuthProvider: FC<Props> = ({ children }) => {
         // Cookies.remove('token');
 
         Cookies.remove('cart');
-        Cookies.remove('firtsName');
+        Cookies.remove('firstName');
         Cookies.remove('lastName');
         Cookies.remove('address');
         Cookies.remove('address2');

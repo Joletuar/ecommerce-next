@@ -70,6 +70,8 @@ const AddressPage = () => {
         country,
         phone,
     }: FormData) => {
+        country = countryCookie;
+
         updateAddress({
             firstName,
             lastName,

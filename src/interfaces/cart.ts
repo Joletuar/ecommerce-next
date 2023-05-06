@@ -16,6 +16,6 @@ export interface ICartProduct {
 export interface ICartOrder {
     quantity: number;
     subtotal: number;
-    impuesto: number;
+    tax: number;
     total: number;
 }
