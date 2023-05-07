@@ -1,9 +1,11 @@
-import { FC, useEffect, useReducer } from 'react';
+import { FC, useContext, useEffect, useReducer } from 'react';
 import { CartContext, cartReducer } from './';
 import { ICartOrder, ICartProduct, IOrder } from '@/interfaces';
 
 import Cookie from 'js-cookie';
 import { tesloApi } from '@/api';
+import { AuthContext } from '../auth';
+import axios from 'axios';
 
 export interface shippignAddress {
     firstName: string;
@@ -41,6 +43,7 @@ interface Props {
 
 export const CartProvider: FC<Props> = ({ children }) => {
     const [state, dispatch] = useReducer(cartReducer, CART_INITIAL_STATE);
+    const { user } = useContext(AuthContext);
 
     // Cargamos la cookies del carrito
     useEffect(() => {
@@ -188,12 +191,16 @@ export const CartProvider: FC<Props> = ({ children }) => {
         dispatch({ type: '[Cart] - Remove cart product', payload: product });
     };
 
-    const createOrder = async () => {
+    const createOrder = async (): Promise<{
+        hasError: boolean;
+        message: string;
+    }> => {
         // Si no tenemos dirección de entrega no creamos la order
         if (!state.shippignAddress) {
             throw new Error('No existe dirección de entrega');
         }
 
+        // Order que será enviada el backen siguiendo el modelo
         const body: IOrder = {
             // Reasignamos el size, dado que este puede ser undefined, pero en este punto ya debería de estar lleno
             orderItems: state.cart.map((p) => ({ ...p, size: p.size! })),
@@ -206,10 +213,35 @@ export const CartProvider: FC<Props> = ({ children }) => {
         };
 
         try {
-            const { data } = await tesloApi.post('/orders', body);
-            console.log(data);
+            const { data } = await tesloApi.post<{
+                ok: boolean;
+                order: IOrder;
+            }>('/orders', body, {
+                headers: {
+                    'x-token': user?.token,
+                },
+            });
+
+            Cookie.set('cart', '[]');
+
+            dispatch({ type: '[Cart] - Order complete' });
+
+            return {
+                hasError: false,
+                message: data.order._id!,
+            };
         } catch (error) {
-            console.log(error);
+            if (axios.isAxiosError(error)) {
+                return {
+                    hasError: true,
+                    message: error.response?.data.message,
+                };
+            }
+
+            return {
+                hasError: true,
+                message: 'Ha ocurrido un error, intente más tarde',
+            };
         }
     };
 

@@ -28,20 +28,24 @@ export default NextAuth({
                 },
             },
             async authorize(credentials, req) {
-                const user = await dbUsers.checkUserEmailPassword(
+                const result = await dbUsers.checkUserEmailPassword(
                     credentials!.email,
                     credentials!.password
                 );
 
-                if (!user) {
+                if (!result?.user) {
                     return null;
                 }
+
+                const user = result.user;
+                const token = result.token;
 
                 return {
                     id: user._id, // Siempre hay que retornar un id, o si no tira error
                     email: user.email,
                     role: user.role,
                     name: user.name,
+                    token,
                 };
             },
         }),

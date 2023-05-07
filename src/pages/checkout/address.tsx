@@ -15,7 +15,7 @@ import {
     TextField,
     Typography,
 } from '@mui/material';
-import { useContext, useState } from 'react';
+import { useContext } from 'react';
 import { CartContext } from '@/context';
 
 type FormData = {
@@ -45,9 +45,9 @@ const getAddressFromCookies = (): FormData => {
 
 const AddressPage = () => {
     const router = useRouter();
-    const [countryCookie, setCountryCookie] = useState(
-        Cookie.get('country') || 'ECU'
-    );
+    // const [countryCookie, setCountryCookie] = useState(
+    //     Cookie.get('country') || 'ECU'
+    // );
 
     const {
         register, // Con esto enlazamos los campos
@@ -70,8 +70,6 @@ const AddressPage = () => {
         country,
         phone,
     }: FormData) => {
-        country = countryCookie;
-
         updateAddress({
             firstName,
             lastName,
@@ -198,10 +196,10 @@ const AddressPage = () => {
                                 variant='filled'
                                 label='País'
                                 {...register('country')}
-                                value={countryCookie}
-                                onChange={(e) =>
-                                    setCountryCookie(e.target.value)
-                                }
+                                // value={countryCookie}
+                                // onChange={(e) =>
+                                //     setCountryCookie(e.target.value)
+                                // }
                             >
                                 {countries.map((country) => (
                                     // MenuItem: es un componente que corresponde a un itemn dentro del menu desplegable

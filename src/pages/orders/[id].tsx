@@ -6,7 +6,6 @@ import { ShopLayout } from '@/components/layouts';
 
 import {
     Box,
-    Button,
     Card,
     CardContent,
     Chip,
@@ -20,7 +19,13 @@ import {
     CreditScoreOutlined,
 } from '@mui/icons-material';
 
-const OrderPage = () => {
+import { GetServerSideProps, NextPage } from 'next';
+
+// interface Props {
+//     ok?: boolean;
+// }
+
+const OrderPage: NextPage = () => {
     return (
         <ShopLayout
             title='Resumen de la orden 12121434'
@@ -52,7 +57,7 @@ const OrderPage = () => {
 
             <Grid container justifyContent='space-between'>
                 <Grid item xs={12} sm={6} mt={2}>
-                    <CartList />
+                    <CartList editable={false} />
                 </Grid>
 
                 <Divider
@@ -137,3 +142,22 @@ const OrderPage = () => {
 };
 
 export default OrderPage;
+
+export const getServerSideProps: GetServerSideProps = async ({ query }) => {
+    const { id = '' } = query;
+
+    if (id.length < 3) {
+        return {
+            redirect: {
+                destination: '/',
+                permanent: true,
+            },
+        };
+    }
+
+    return {
+        props: {
+            ok: true,
+        },
+    };
+};

@@ -1,4 +1,4 @@
-import { useContext, useEffect, useMemo } from 'react';
+import { useContext, useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/router';
 import NextLink from 'next/link';
 
@@ -12,6 +12,7 @@ import {
     Button,
     Card,
     CardContent,
+    Chip,
     Divider,
     Grid,
     Link,
@@ -24,6 +25,9 @@ import Cookie from 'js-cookie';
 const SummaryPage = () => {
     const router = useRouter();
     const { shippignAddress, order, createOrder } = useContext(CartContext);
+
+    const [isPosting, setIsPosting] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
 
     useEffect(() => {
         if (!Cookie.get('firstName')) {
@@ -40,7 +44,21 @@ const SummaryPage = () => {
     );
 
     const handleOrder = async () => {
-        createOrder();
+        // Desactivamos el boton cuando haga la orden
+        setIsPosting(true);
+
+        const { hasError, message } = await createOrder();
+
+        if (hasError) {
+            setIsPosting(false);
+            setErrorMessage(message);
+            setTimeout(() => {
+                setErrorMessage('');
+            }, 2000);
+            return;
+        }
+
+        router.replace(`/orders/${message}`);
     };
 
     if (!shippignAddress) {
@@ -133,9 +151,15 @@ const SummaryPage = () => {
 
                             <CardOrderSummary />
 
-                            <Box sx={{ mt: 3 }}>
+                            <Box
+                                sx={{ mt: 3 }}
+                                display='flex'
+                                flexDirection='column'
+                                gap={1}
+                            >
                                 {/* La prop "fullWidth" hace que el boton ocupe todo el ancho de su contenedor */}
                                 <Button
+                                    disabled={isPosting}
                                     color='secondary'
                                     className='circular-btn'
                                     fullWidth
@@ -149,6 +173,14 @@ const SummaryPage = () => {
                                 >
                                     Confirmar Orden
                                 </Button>
+
+                                <Chip
+                                    color='error'
+                                    label={errorMessage}
+                                    sx={{
+                                        display: errorMessage ? 'flex' : 'none',
+                                    }}
+                                />
                             </Box>
                         </CardContent>
                     </Card>

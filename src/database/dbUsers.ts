@@ -11,6 +11,7 @@ export const checkUserEmailPassword = async (
         // Realizamos la petición a nuestro edpoint
         const { data } = await tesloApi.post<{
             user: IUser;
+            token: string;
             ok: boolean;
         }>('/user/login', {
             email,
@@ -18,14 +19,14 @@ export const checkUserEmailPassword = async (
         });
 
         // Obtenemos los datos
-        const { user, ok } = data;
+        const { user, ok, token } = data;
 
         // Si no es ok entonces retornamos false
         if (!ok) {
             return null;
         }
 
-        return user;
+        return { user, token };
     } catch (error) {
         return null;
     }
@@ -38,6 +39,7 @@ export const oAuthToDbUser = async (oAuthEmail: string, oAuthName: string) => {
         // Realizamos la petición a nuestro edpoint
         const { data } = await tesloApi.post<{
             user: IUser;
+            token: string;
             ok: boolean;
         }>('/user/login', {
             email: oAuthEmail,
@@ -45,7 +47,7 @@ export const oAuthToDbUser = async (oAuthEmail: string, oAuthName: string) => {
         });
 
         // Obtenemos los datos
-        const { user, ok } = data;
+        const { user, ok, token } = data;
 
         // Si el usuario ya existe retornamos los valores de la bd
         if (ok) {
@@ -55,6 +57,7 @@ export const oAuthToDbUser = async (oAuthEmail: string, oAuthName: string) => {
                 name,
                 email,
                 role,
+                token,
             };
         }
 
@@ -68,6 +71,7 @@ export const oAuthToDbUser = async (oAuthEmail: string, oAuthName: string) => {
                     // Definimos primero la url y despues el body
                     const { data } = await tesloApi.post<{
                         user: IUser;
+                        token: string;
                         ok: boolean;
                     }>('/user/register', {
                         email: oAuthEmail,
@@ -77,7 +81,7 @@ export const oAuthToDbUser = async (oAuthEmail: string, oAuthName: string) => {
                     });
 
                     // Obtenemos los datos
-                    const { user, ok } = data;
+                    const { user, ok, token } = data;
 
                     // Si no es ok entonces retornamos false
                     if (ok) {
@@ -87,6 +91,7 @@ export const oAuthToDbUser = async (oAuthEmail: string, oAuthName: string) => {
                             name,
                             email,
                             role,
+                            token,
                         };
                     }
 

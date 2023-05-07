@@ -45,11 +45,8 @@ export const CartList: FC<Props> = ({ editable = true }) => {
                     key={`${product.slug}${product.size}`}
                 >
                     {/* Item correspondiente a las images de los productos del carrito */}
-
                     {/* A los Grid "item" siempre se les debe de definir el num. columnas que va a ocupar dentro del Grid */}
                     <Grid item xs={3}>
-                        {/* TODO: llevar a la pag. del producto */}
-
                         <NextLink
                             href={`/product/${product.slug}`}
                             passHref
@@ -91,8 +88,8 @@ export const CartList: FC<Props> = ({ editable = true }) => {
                             ) : (
                                 <Typography variant='h6'>
                                     {product.quantity > 1
-                                        ? `${product.quantity} items`
-                                        : `${product.quantity} item`}
+                                        ? `${product.quantity} productos`
+                                        : `${product.quantity} producto`}
                                 </Typography>
                             )}
                         </Box>
@@ -108,7 +105,7 @@ export const CartList: FC<Props> = ({ editable = true }) => {
                         flexDirection='column'
                     >
                         <Typography variant='subtitle1'>
-                            ${product.price}
+                            ${product.price} c/u
                         </Typography>
 
                         {/* Editable */}
