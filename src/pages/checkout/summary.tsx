@@ -24,7 +24,7 @@ import Cookie from 'js-cookie';
 
 const SummaryPage = () => {
     const router = useRouter();
-    const { shippignAddress, order, createOrder } = useContext(CartContext);
+    const { shippingAddress, order, createOrder } = useContext(CartContext);
 
     const [isPosting, setIsPosting] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
@@ -38,7 +38,7 @@ const SummaryPage = () => {
     const countryNameMemo = useMemo(
         () =>
             countries.find(
-                (country) => country.code === shippignAddress?.country
+                (country) => country.code === shippingAddress?.country
             ),
         []
     );
@@ -61,7 +61,7 @@ const SummaryPage = () => {
         router.replace(`/orders/${message}`);
     };
 
-    if (!shippignAddress) {
+    if (!shippingAddress) {
         return <></>;
     }
 
@@ -121,22 +121,22 @@ const SummaryPage = () => {
                                 Dirección de Entrega
                             </Typography>
 
-                            <Typography>{`${shippignAddress?.firstName} ${shippignAddress?.lastName}`}</Typography>
+                            <Typography>{`${shippingAddress?.firstName} ${shippingAddress?.lastName}`}</Typography>
 
                             <Typography>
-                                {shippignAddress.address}
-                                {shippignAddress.address2
-                                    ? `, ${shippignAddress.address2}`
+                                {shippingAddress.address}
+                                {shippingAddress.address2
+                                    ? `, ${shippingAddress.address2}`
                                     : ''}
                             </Typography>
 
-                            <Typography>{shippignAddress?.city}</Typography>
+                            <Typography>{shippingAddress?.city}</Typography>
 
                             <Typography>
-                                {countryNameMemo?.name}, {shippignAddress?.zip}
+                                {countryNameMemo?.name}, {shippingAddress?.zip}
                             </Typography>
 
-                            <Typography>{shippignAddress?.phone}</Typography>
+                            <Typography>{shippingAddress?.phone}</Typography>
 
                             <Divider sx={{ my: 1 }} />
 

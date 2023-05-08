@@ -7,7 +7,7 @@ import { tesloApi } from '@/api';
 import { AuthContext } from '../auth';
 import axios from 'axios';
 
-export interface shippignAddress {
+export interface shippingAddress {
     firstName: string;
     lastName: string;
     address: string;
@@ -22,7 +22,7 @@ export interface CartState {
     isLoaded: boolean;
     cart: ICartProduct[];
     order: ICartOrder;
-    shippignAddress?: shippignAddress;
+    shippingAddress?: shippingAddress;
 }
 
 const CART_INITIAL_STATE: CartState = {
@@ -34,7 +34,7 @@ const CART_INITIAL_STATE: CartState = {
         tax: 0,
         total: 0,
     },
-    shippignAddress: undefined,
+    shippingAddress: undefined,
 };
 
 interface Props {
@@ -126,7 +126,7 @@ export const CartProvider: FC<Props> = ({ children }) => {
     }, []);
 
     // Actualizar shippign address
-    const updateAddress = (address: shippignAddress) => {
+    const updateAddress = (address: shippingAddress) => {
         // Guardamos en las cookies campo por campo, porque no se puede guardar un objeto ya que tira error
         Cookie.set('firstName', address.firstName);
         Cookie.set('lastName', address.lastName);
@@ -196,7 +196,7 @@ export const CartProvider: FC<Props> = ({ children }) => {
         message: string;
     }> => {
         // Si no tenemos dirección de entrega no creamos la order
-        if (!state.shippignAddress) {
+        if (!state.shippingAddress) {
             throw new Error('No existe dirección de entrega');
         }
 
@@ -204,7 +204,7 @@ export const CartProvider: FC<Props> = ({ children }) => {
         const body: IOrder = {
             // Reasignamos el size, dado que este puede ser undefined, pero en este punto ya debería de estar lleno
             orderItems: state.cart.map((p) => ({ ...p, size: p.size! })),
-            shippingAddress: state.shippignAddress,
+            shippingAddress: state.shippingAddress,
             numberOfItems: state.order.quantity,
             subTotal: state.order.subtotal,
             total: state.order.total,

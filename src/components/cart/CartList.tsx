@@ -14,14 +14,15 @@ import {
 } from '@mui/material';
 
 import { ItemCounter } from '../ui';
-import { ICartProduct } from '@/interfaces';
+import { ICartProduct, IOrder, IOrderItem } from '@/interfaces';
 
 interface Props {
     editable?: boolean;
+    products?: IOrderItem[];
 }
 
-export const CartList: FC<Props> = ({ editable = true }) => {
-    const { cart, updatedCartQuantity, deleteCartProduct } =
+export const CartList: FC<Props> = ({ editable = true, products }) => {
+    let { cart, updatedCartQuantity, deleteCartProduct } =
         useContext(CartContext);
 
     // Función que se encarga de actualizar la cantidad en lista de productos
@@ -34,9 +35,11 @@ export const CartList: FC<Props> = ({ editable = true }) => {
         deleteCartProduct(product);
     };
 
+    const productsToShow = products || cart;
+
     return (
         <>
-            {cart.map((product) => (
+            {productsToShow.map((product) => (
                 // Se utiliza container porque va a tener varios elementos iternos
 
                 <Grid
@@ -81,7 +84,10 @@ export const CartList: FC<Props> = ({ editable = true }) => {
                                 <ItemCounter
                                     currentValue={product.quantity}
                                     updatedValue={(value) =>
-                                        onNewQuantityValue(product, value)
+                                        onNewQuantityValue(
+                                            product as ICartProduct,
+                                            value
+                                        )
                                     }
                                     maxValue={10}
                                 />
@@ -114,7 +120,9 @@ export const CartList: FC<Props> = ({ editable = true }) => {
                             <Button
                                 color='error'
                                 variant='text'
-                                onClick={() => onDeleteProductCart(product)}
+                                onClick={() =>
+                                    onDeleteProductCart(product as ICartProduct)
+                                }
                             >
                                 Borrar
                             </Button>

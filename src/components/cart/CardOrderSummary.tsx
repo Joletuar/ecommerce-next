@@ -1,12 +1,23 @@
-import { useContext } from 'react';
+import { FC, useContext } from 'react';
 
 import { CartContext } from '@/context';
 
 import { Grid, Typography } from '@mui/material';
 import { currency } from '@/utils';
 
-export const CardOrderSummary = () => {
+interface Props {
+    orderBackend?: {
+        quantity: number;
+        subtotal: number;
+        tax: number;
+        total: number;
+    };
+}
+
+export const CardOrderSummary: FC<Props> = ({ orderBackend }) => {
     const { order } = useContext(CartContext);
+
+    const orderToShow = orderBackend || order;
 
     return (
         <Grid container>
@@ -16,9 +27,9 @@ export const CardOrderSummary = () => {
 
             <Grid item xs={6} display='flex' justifyContent='end'>
                 <Typography>
-                    {order.quantity > 1
-                        ? order.quantity + ' productos'
-                        : order.quantity + ' producto'}
+                    {orderToShow.quantity > 1
+                        ? orderToShow.quantity + ' productos'
+                        : orderToShow.quantity + ' producto'}
                 </Typography>
             </Grid>
 
@@ -27,7 +38,9 @@ export const CardOrderSummary = () => {
             </Grid>
 
             <Grid item xs={6} display='flex' justifyContent='end'>
-                <Typography>{currency.formatPrice(order.subtotal)}</Typography>
+                <Typography>
+                    {currency.formatPrice(orderToShow.subtotal)}
+                </Typography>
             </Grid>
 
             <Grid item xs={6}>
@@ -37,7 +50,7 @@ export const CardOrderSummary = () => {
             </Grid>
 
             <Grid item xs={6} display='flex' justifyContent='end'>
-                <Typography>{currency.formatPrice(order.tax)}</Typography>
+                <Typography>{currency.formatPrice(orderToShow.tax)}</Typography>
             </Grid>
 
             <Grid item xs={6}>
@@ -46,7 +59,7 @@ export const CardOrderSummary = () => {
 
             <Grid item xs={6} display='flex' justifyContent='end'>
                 <Typography variant='subtitle1'>
-                    {currency.formatPrice(order.total)}
+                    {currency.formatPrice(orderToShow.total)}
                 </Typography>
             </Grid>
         </Grid>

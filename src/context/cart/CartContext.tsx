@@ -1,19 +1,19 @@
 import { ICartProduct, ICartOrder } from '@/interfaces';
 import { createContext } from 'react';
-import { shippignAddress } from './CartProvider';
+import { shippingAddress } from './CartProvider';
 
 interface ContextProps {
     cart: ICartProduct[];
     order: ICartOrder;
     isLoaded: boolean;
 
-    shippignAddress?: shippignAddress;
+    shippingAddress?: shippingAddress;
 
     // Métodos
     onAddProductCart: (producto: ICartProduct) => void;
     updatedCartQuantity: (product: ICartProduct) => void;
     deleteCartProduct: (product: ICartProduct) => void;
-    updateAddress: (address: shippignAddress) => void;
+    updateAddress: (address: shippingAddress) => void;
 
     // Orders
     createOrder: () => Promise<{

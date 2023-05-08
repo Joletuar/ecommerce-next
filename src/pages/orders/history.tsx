@@ -1,10 +1,13 @@
-import { NextPage } from 'next';
+import { GetServerSideProps, NextPage } from 'next';
 import NextLink from 'next/link';
+import { getSession } from 'next-auth/react';
 
 import { ShopLayout } from '@/components/layouts';
 
 import { Chip, Grid, Typography, Link } from '@mui/material';
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
+import { tesloApi } from '@/api';
+import { IOrder } from '@/interfaces';
 
 // De esta manera se indica el formato de como será la data dento del data grid
 
@@ -51,7 +54,7 @@ const columns: GridColDef[] | GridColDef<JSX.Element> = [
             return (
                 // Para acceder a los valores de las filas se usa el params.row.nombre_de_la_columna
                 <NextLink
-                    href={`/orders/${params.row.id}`}
+                    href={`/orders/${params.row.orderId}`}
                     legacyBehavior
                     passHref
                 >
@@ -64,19 +67,20 @@ const columns: GridColDef[] | GridColDef<JSX.Element> = [
     },
 ];
 
-const rows = [
-    { id: 1, paid: true, fullName: 'Johan Tuarez Vega' },
-    { id: 2, paid: false, fullName: 'Leonardo Tuarez Vega' },
-    { id: 3, paid: true, fullName: 'Junior Tuarez Vega' },
-    { id: 4, paid: true, fullName: 'Carlos Tuarez Vega' },
-    { id: 5, paid: false, fullName: 'Eduardo Tuarez Vega' },
-    { id: 6, paid: false, fullName: 'Ronald Tuarez Vega' },
-    { id: 7, paid: false, fullName: 'Diego Tuarez Vega' },
-    { id: 8, paid: true, fullName: 'Sebastian Tuarez Vega' },
-    { id: 9, paid: true, fullName: 'Miguel Tuarez Vega' },
-];
+interface Props {
+    orders: IOrder[];
+}
 
-const HistoryPage: NextPage = () => {
+const HistoryPage: NextPage<Props> = ({ orders }) => {
+    const rows = orders.map((order, index) => ({
+        id: index + 1,
+        paid: order.isPaid,
+        fullName:
+            order.shippingAddress.firstName +
+            ' ' +
+            order.shippingAddress.lastName,
+        orderId: order._id,
+    }));
     return (
         <ShopLayout
             title='Historial de ordenes'
@@ -86,7 +90,7 @@ const HistoryPage: NextPage = () => {
                 Historial de Ordenes
             </Typography>
 
-            <Grid container>
+            <Grid container className='fadeIn'>
                 <Grid item xs={12} sx={{ height: 650, width: '100%' }}>
                     {/* Este componente siempre necesita las columnas y rows
                     pagesize: indica el numero de elementos por página */}
@@ -99,3 +103,42 @@ const HistoryPage: NextPage = () => {
 };
 
 export default HistoryPage;
+
+export const getServerSideProps: GetServerSideProps = async ({ req }) => {
+    const session: any = await getSession({ req });
+    const id = session.user._id;
+
+    if (!session) {
+        return {
+            redirect: {
+                destination: `/auth/login?p=/orders/history`,
+                permanent: false,
+            },
+        };
+    }
+
+    const { data } = await tesloApi.get<{
+        ok: boolean;
+        message?: string;
+        orders?: IOrder[];
+    }>(`/orders/${id}`);
+
+    let { ok, orders } = data;
+
+    if (!ok) {
+        return {
+            redirect: {
+                destination: `/`,
+                permanent: false,
+            },
+        };
+    }
+
+    orders = orders?.filter(
+        (order) => order?.user?.toString() === session.user._id
+    );
+
+    return {
+        props: { orders },
+    };
+};

@@ -1,3 +1,5 @@
+import { GetServerSideProps, NextPage } from 'next';
+import { getSession } from 'next-auth/react';
 import NextLink from 'next/link';
 
 import { CardOrderSummary, CartList } from '@/components/cart';
@@ -18,46 +20,60 @@ import {
     CreditCardOffOutlined,
     CreditScoreOutlined,
 } from '@mui/icons-material';
+import { tesloApi } from '@/api';
+import { IOrder } from '@/interfaces';
 
-import { GetServerSideProps, NextPage } from 'next';
+interface Props {
+    order: IOrder;
+}
 
-// interface Props {
-//     ok?: boolean;
-// }
+const OrderPage: NextPage<Props> = ({ order }) => {
+    const {
+        isPaid,
+        numberOfItems,
+        orderItems,
+        shippingAddress,
+        subTotal,
+        tax,
+        total,
+        _id,
+        paidAt,
+        paymentResult,
+        user,
+    } = order;
 
-const OrderPage: NextPage = () => {
     return (
         <ShopLayout
-            title='Resumen de la orden 12121434'
-            pageDescription='Resumen de la orden 12332434 antes de pagar'
+            title={`Resumen de la orden ${_id}`}
+            pageDescription={`Resumen de la orden ${_id} antes de pagar`}
         >
             <Typography variant='h1' component='h1'>
-                Orden: 12233243
+                Orden: {_id}
             </Typography>
 
-            {/* Cuadro que se muestra cuando la orden no está pagada */}
+            {isPaid ? (
+                /* Cuadro que se muestra cuando la orden no está pagada */
+                <Chip
+                    sx={{ my: 2 }}
+                    label='Pagado'
+                    color='success'
+                    variant='outlined'
+                    icon={<CreditScoreOutlined />}
+                />
+            ) : (
+                /* Cuadro que se muestra cuando la orden está pagada */
+                <Chip
+                    sx={{ my: 2 }}
+                    label='Pendiente de pago'
+                    color='error'
+                    variant='outlined'
+                    icon={<CreditCardOffOutlined />}
+                />
+            )}
 
-            {/* <Chip
-                sx={{ my: 2 }}
-                label='Pendiente de pago'
-                color='error'
-                variant='outlined'
-                icon={<CreditCardOffOutlined />}
-            /> */}
-
-            {/* Cuadro que se muestra cuando la orden está pagada */}
-
-            <Chip
-                sx={{ my: 2 }}
-                label='Pagado'
-                color='success'
-                variant='outlined'
-                icon={<CreditScoreOutlined />}
-            />
-
-            <Grid container justifyContent='space-between'>
+            <Grid container justifyContent='space-between' className='fadeIn'>
                 <Grid item xs={12} sm={6} mt={2}>
-                    <CartList editable={false} />
+                    <CartList editable={false} products={orderItems} />
                 </Grid>
 
                 <Divider
@@ -75,56 +91,62 @@ const OrderPage: NextPage = () => {
                     <Card className='summary-card'>
                         <CardContent>
                             <Typography variant='h2'>
-                                Resumen (3 productos)
-                                {/* Divider: es una linea divisora */}
+                                Resumen{' '}
+                                {numberOfItems > 1
+                                    ? `${numberOfItems} productos`
+                                    : '1 producto'}
                             </Typography>
 
+                            {/* Divider: es una linea divisora */}
                             <Divider sx={{ my: 1 }} />
-
-                            <Box display='flex' justifyContent='end'>
-                                <NextLink
-                                    href='/checkout/address'
-                                    passHref
-                                    legacyBehavior
-                                >
-                                    {/* Con la propiedad underline="always" podemos mostrar un linea sobre el link */}
-                                    <Link underline='always' variant='overline'>
-                                        Editar
-                                    </Link>
-                                </NextLink>
-                            </Box>
 
                             <Typography variant='subtitle1'>
                                 Dirección de Entrega
                             </Typography>
 
-                            <Typography>333 Alguna parte</Typography>
+                            <Typography>{`${shippingAddress?.firstName} ${shippingAddress?.lastName}`}</Typography>
 
-                            <Typography>Gye, Ecuador</Typography>
+                            <Typography>
+                                {shippingAddress.address}
+                                {shippingAddress.address2
+                                    ? `, ${shippingAddress.address2}`
+                                    : ''}
+                            </Typography>
 
-                            <Typography>Ecuador</Typography>
+                            <Typography>{shippingAddress?.city}</Typography>
 
-                            <Typography>11111</Typography>
+                            <Typography>{shippingAddress.country}</Typography>
 
-                            <Typography>+593 09784546454</Typography>
-
-                            <Typography>Johan Tuarez</Typography>
+                            <Typography>{shippingAddress?.phone}</Typography>
 
                             <Divider sx={{ my: 1 }} />
 
-                            <Box display='flex' justifyContent='end'>
-                                <NextLink href='/cart' passHref legacyBehavior>
-                                    {/* Con la propiedad underline="always" podemos mostrar un linea sobre el link */}
-                                    <Link underline='always' variant='overline'>
-                                        Editar
-                                    </Link>
-                                </NextLink>
-                            </Box>
+                            <CardOrderSummary
+                                orderBackend={{
+                                    quantity: numberOfItems,
+                                    subtotal: subTotal,
+                                    tax,
+                                    total,
+                                }}
+                            />
 
-                            <CardOrderSummary />
+                            <Box
+                                sx={{ mt: 3 }}
+                                display='flex'
+                                flexDirection='column'
+                            >
+                                {isPaid ? (
+                                    <Chip
+                                        sx={{ my: 2 }}
+                                        label='Pagado'
+                                        color='success'
+                                        variant='outlined'
+                                        icon={<CreditScoreOutlined />}
+                                    />
+                                ) : (
+                                    <h1>Pagar (Implementar)</h1>
+                                )}
 
-                            <Box sx={{ mt: 3 }}>
-                                <h1>Pagar</h1>
                                 <Chip
                                     sx={{ my: 2 }}
                                     label='Pagado'
@@ -143,21 +165,52 @@ const OrderPage: NextPage = () => {
 
 export default OrderPage;
 
-export const getServerSideProps: GetServerSideProps = async ({ query }) => {
+export const getServerSideProps: GetServerSideProps = async ({
+    req,
+    query,
+}) => {
     const { id = '' } = query;
 
-    if (id.length < 3) {
+    const session: any = await getSession({ req });
+
+    if (!session) {
         return {
             redirect: {
-                destination: '/',
-                permanent: true,
+                destination: `/auth/login?p=${id}`,
+                permanent: false,
+            },
+        };
+    }
+
+    const { data } = await tesloApi.get<{
+        ok: boolean;
+        order?: IOrder;
+        message?: string;
+    }>(`/orders/${id}`);
+
+    const { ok, order } = data;
+
+    if (!ok) {
+        return {
+            redirect: {
+                destination: `orders/history`,
+                permanent: false,
+            },
+        };
+    }
+
+    if (order?.user?.toString() != session.user._id) {
+        return {
+            redirect: {
+                destination: `orders/history`,
+                permanent: false,
             },
         };
     }
 
     return {
         props: {
-            ok: true,
+            order,
         },
     };
 };
