@@ -117,28 +117,39 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
         };
     }
 
-    const { data } = await tesloApi.get<{
-        ok: boolean;
-        message?: string;
-        orders?: IOrder[];
-    }>(`/orders/${id}`);
+    try {
+        const { data } = await tesloApi.get<{
+            ok: boolean;
+            message?: string;
+            orders?: IOrder[];
+        }>(`/orders/user/${id}`);
 
-    let { ok, orders } = data;
+        let { ok, orders } = data;
 
-    if (!ok) {
+        if (!ok) {
+            return {
+                redirect: {
+                    destination: `/`,
+                    permanent: false,
+                },
+            };
+        }
+
+        orders = orders?.filter(
+            (order) => order?.user?.toString() === session.user._id
+        );
+
+        return {
+            props: { orders },
+        };
+    } catch (error) {
+        console.log(error);
+
         return {
             redirect: {
-                destination: `/`,
+                destination: '/',
                 permanent: false,
             },
         };
     }
-
-    orders = orders?.filter(
-        (order) => order?.user?.toString() === session.user._id
-    );
-
-    return {
-        props: { orders },
-    };
 };

@@ -228,7 +228,7 @@ export const CartProvider: FC<Props> = ({ children }) => {
 
             return {
                 hasError: false,
-                message: data.order._id!,
+                message: data.order._id?.toString()!,
             };
         } catch (error) {
             if (axios.isAxiosError(error)) {

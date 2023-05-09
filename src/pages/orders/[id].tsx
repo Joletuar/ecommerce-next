@@ -1,6 +1,5 @@
 import { GetServerSideProps, NextPage } from 'next';
 import { getSession } from 'next-auth/react';
-import NextLink from 'next/link';
 
 import { CardOrderSummary, CartList } from '@/components/cart';
 
@@ -13,7 +12,6 @@ import {
     Chip,
     Divider,
     Grid,
-    Link,
     Typography,
 } from '@mui/material';
 import {
@@ -37,9 +35,6 @@ const OrderPage: NextPage<Props> = ({ order }) => {
         tax,
         total,
         _id,
-        paidAt,
-        paymentResult,
-        user,
     } = order;
 
     return (
@@ -146,14 +141,6 @@ const OrderPage: NextPage<Props> = ({ order }) => {
                                 ) : (
                                     <h1>Pagar (Implementar)</h1>
                                 )}
-
-                                <Chip
-                                    sx={{ my: 2 }}
-                                    label='Pagado'
-                                    color='success'
-                                    variant='outlined'
-                                    icon={<CreditScoreOutlined />}
-                                />
                             </Box>
                         </CardContent>
                     </Card>
@@ -182,35 +169,46 @@ export const getServerSideProps: GetServerSideProps = async ({
         };
     }
 
-    const { data } = await tesloApi.get<{
-        ok: boolean;
-        order?: IOrder;
-        message?: string;
-    }>(`/orders/${id}`);
+    try {
+        const { data } = await tesloApi.get<{
+            ok: boolean;
+            order?: IOrder;
+            message?: string;
+        }>(`/orders/${id}`);
 
-    const { ok, order } = data;
+        const { ok, order } = data;
 
-    if (!ok) {
+        if (!ok) {
+            return {
+                redirect: {
+                    destination: `orders/history`,
+                    permanent: false,
+                },
+            };
+        }
+
+        if (order?.user?.toString() != session.user._id) {
+            return {
+                redirect: {
+                    destination: `/orders/history`,
+                    permanent: false,
+                },
+            };
+        }
+
+        return {
+            props: {
+                order,
+            },
+        };
+    } catch (error) {
+        // console.log(error);
+
         return {
             redirect: {
-                destination: `orders/history`,
+                destination: `/`,
                 permanent: false,
             },
         };
     }
-
-    if (order?.user?.toString() != session.user._id) {
-        return {
-            redirect: {
-                destination: `orders/history`,
-                permanent: false,
-            },
-        };
-    }
-
-    return {
-        props: {
-            order,
-        },
-    };
 };
