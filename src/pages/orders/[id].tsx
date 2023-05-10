@@ -5,6 +5,8 @@ import { CardOrderSummary, CartList } from '@/components/cart';
 
 import { ShopLayout } from '@/components/layouts';
 
+import { PayPalButtons } from '@paypal/react-paypal-js';
+
 import {
     Box,
     Card,
@@ -139,7 +141,31 @@ const OrderPage: NextPage<Props> = ({ order }) => {
                                         icon={<CreditScoreOutlined />}
                                     />
                                 ) : (
-                                    <h1>Pagar (Implementar)</h1>
+                                    <PayPalButtons
+                                        createOrder={(data, actions) => {
+                                            return actions.order.create({
+                                                purchase_units: [
+                                                    {
+                                                        amount: {
+                                                            value: total.toLocaleString(),
+                                                        },
+                                                    },
+                                                ],
+                                            });
+                                        }}
+                                        onApprove={async (data, actions) => {
+                                            return actions
+                                                .order!.capture()
+                                                .then((details) => {
+                                                    const name =
+                                                        details.payer.name!
+                                                            .given_name;
+                                                    // alert(
+                                                    //     `Transaction completed by ${name}`
+                                                    // );
+                                                });
+                                        }}
+                                    />
                                 )}
                             </Box>
                         </CardContent>
