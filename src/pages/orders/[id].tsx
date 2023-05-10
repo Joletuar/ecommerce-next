@@ -1,4 +1,6 @@
+import { useState } from 'react';
 import { GetServerSideProps, NextPage } from 'next';
+import { useRouter } from 'next/router';
 import { getSession } from 'next-auth/react';
 
 import { CardOrderSummary, CartList } from '@/components/cart';
@@ -12,6 +14,7 @@ import {
     Card,
     CardContent,
     Chip,
+    CircularProgress,
     Divider,
     Grid,
     Typography,
@@ -28,6 +31,10 @@ interface Props {
 }
 
 const OrderPage: NextPage<Props> = ({ order }) => {
+    const [isPaying, setIsPaying] = useState(false);
+
+    const router = useRouter();
+
     const {
         isPaid,
         numberOfItems,
@@ -38,6 +45,35 @@ const OrderPage: NextPage<Props> = ({ order }) => {
         total,
         _id,
     } = order;
+
+    const onOrderCompleted = async (details: any) => {
+        if (details.status !== 'COMPLETED') {
+            return alert('No hay pago en Paypal');
+        }
+
+        setIsPaying(true);
+
+        try {
+            const { data } = await tesloApi.post<{
+                ok: boolean;
+                message: string;
+            }>('/order/pays', {
+                transactionId: details.id,
+                orderId: order._id,
+            });
+
+            if (!data.ok) {
+                return alert('Error');
+            }
+
+            // Con esto podemos recargamos la página
+            router.reload();
+        } catch (error) {
+            setIsPaying(false);
+            console.log(error);
+            alert('Error');
+        }
+    };
 
     return (
         <ShopLayout
@@ -132,41 +168,66 @@ const OrderPage: NextPage<Props> = ({ order }) => {
                                 display='flex'
                                 flexDirection='column'
                             >
-                                {isPaid ? (
-                                    <Chip
-                                        sx={{ my: 2 }}
-                                        label='Pagado'
-                                        color='success'
-                                        variant='outlined'
-                                        icon={<CreditScoreOutlined />}
-                                    />
-                                ) : (
-                                    <PayPalButtons
-                                        createOrder={(data, actions) => {
-                                            return actions.order.create({
-                                                purchase_units: [
-                                                    {
-                                                        amount: {
-                                                            value: total.toLocaleString(),
+                                <Box
+                                    display='flex'
+                                    justifyContent='center'
+                                    className='fadeIn'
+                                    sx={{
+                                        display: isPaying ? 'flex' : 'none',
+                                    }}
+                                >
+                                    <CircularProgress />
+                                </Box>
+
+                                <Box
+                                    sx={{
+                                        display: isPaying ? 'none' : 'flex',
+                                        flex: 1,
+                                    }}
+                                    flexDirection='column'
+                                >
+                                    {isPaid ? (
+                                        <Chip
+                                            sx={{ my: 2 }}
+                                            label='Pagado'
+                                            color='success'
+                                            variant='outlined'
+                                            icon={<CreditScoreOutlined />}
+                                        />
+                                    ) : (
+                                        <PayPalButtons
+                                            createOrder={(data, actions) => {
+                                                return actions.order.create({
+                                                    purchase_units: [
+                                                        {
+                                                            amount: {
+                                                                value: total.toLocaleString(),
+                                                            },
                                                         },
-                                                    },
-                                                ],
-                                            });
-                                        }}
-                                        onApprove={async (data, actions) => {
-                                            return actions
-                                                .order!.capture()
-                                                .then((details) => {
-                                                    const name =
-                                                        details.payer.name!
-                                                            .given_name;
-                                                    // alert(
-                                                    //     `Transaction completed by ${name}`
-                                                    // );
+                                                    ],
                                                 });
-                                        }}
-                                    />
-                                )}
+                                            }}
+                                            onApprove={async (
+                                                data,
+                                                actions
+                                            ) => {
+                                                return actions
+                                                    .order!.capture()
+                                                    .then((details) => {
+                                                        onOrderCompleted(
+                                                            details
+                                                        );
+                                                        // const name =
+                                                        //     details.payer.name!
+                                                        //         .given_name;
+                                                        // alert(
+                                                        //     `Transaction completed by ${name}`
+                                                        // );
+                                                    });
+                                            }}
+                                        />
+                                    )}
+                                </Box>
                             </Box>
                         </CardContent>
                     </Card>
