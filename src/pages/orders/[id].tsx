@@ -47,31 +47,33 @@ const OrderPage: NextPage<Props> = ({ order }) => {
     } = order;
 
     const onOrderCompleted = async (details: any) => {
+        // console.log('-------->', details);
+
         if (details.status !== 'COMPLETED') {
             return alert('No hay pago en Paypal');
         }
-
         setIsPaying(true);
 
         try {
             const { data } = await tesloApi.post<{
                 ok: boolean;
                 message: string;
-            }>('/order/pays', {
+            }>('/orders/pay', {
                 transactionId: details.id,
                 orderId: order._id,
             });
+            // console.log('--->', data);
 
             if (!data.ok) {
                 return alert('Error');
             }
-
+        } catch (error) {
+            // console.log(error);
+            setIsPaying(false);
+            alert('Error');
+        } finally {
             // Con esto podemos recargamos la página
             router.reload();
-        } catch (error) {
-            setIsPaying(false);
-            console.log(error);
-            alert('Error');
         }
     };
 
@@ -201,10 +203,13 @@ const OrderPage: NextPage<Props> = ({ order }) => {
                                                     purchase_units: [
                                                         {
                                                             amount: {
-                                                                value: total.toLocaleString(),
+                                                                currency_code:
+                                                                    'USD',
+                                                                value: `${total}`,
                                                             },
                                                         },
                                                     ],
+                                                    intent: 'CAPTURE',
                                                 });
                                             }}
                                             onApprove={async (
