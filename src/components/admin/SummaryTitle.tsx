@@ -1,6 +1,7 @@
-import { FC } from 'react';
+import { FC, useEffect, useState } from 'react';
 
 import { Card, CardContent, Grid, Typography } from '@mui/material';
+import { tesloApi } from '@/api';
 
 interface Props {
     children?: JSX.Element | JSX.Element[];
@@ -9,7 +10,37 @@ interface Props {
     icon: JSX.Element;
 }
 
+interface Statistics {
+    numberOfOrders: number;
+    paidOrders: number;
+    notPaidOrders: number;
+    numberOfClients: number;
+    numberOfProducts: number;
+    productWithNotInventory: number;
+    lowInventory: number;
+}
+
 export const SummaryTitle: FC<Props> = ({ title, subTitle, icon }) => {
+    const [statistics, setStatistics] = useState({});
+
+    useEffect(() => {
+        (async () => {
+            const { data } = await tesloApi.get<{
+                ok: boolean;
+                message?: string;
+                statistics: Statistics;
+            }>('/admin/dashboard');
+
+            const { ok, message, statistics } = data;
+
+            if (!ok) {
+                return;
+            }
+
+            setStatistics(statistics);
+        })();
+    }, []);
+
     return (
         <Grid item xs={12} sm={4} md={3}>
             {/* Las tarjetas siempre tienen un shadow */}
