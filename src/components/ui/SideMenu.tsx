@@ -8,6 +8,7 @@ import {
     AdminPanelSettings,
     CategoryOutlined,
     ConfirmationNumberOutlined,
+    DashboardOutlined,
     EscalatorWarningOutlined,
     FemaleOutlined,
     LoginOutlined,
@@ -167,8 +168,18 @@ export const SideMenu = () => {
                         <>
                             {/* Admin */}
                             <Divider />
+
                             {/* ListSubheader: permite poner un subtitulo */}
                             <ListSubheader>Admin Panel</ListSubheader>
+
+                            <ListItemButton
+                                onClick={() => navigateTo('/admin')}
+                            >
+                                <ListItemIcon>
+                                    <DashboardOutlined />
+                                </ListItemIcon>
+                                <ListItemText primary={'Dashboard'} />
+                            </ListItemButton>
 
                             <ListItemButton>
                                 <ListItemIcon>
