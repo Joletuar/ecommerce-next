@@ -1,3 +1,5 @@
+import { useEffect, useState } from 'react';
+
 import { SummaryTitle } from '@/components/admin';
 import { AdminLayout } from '@/components/layouts';
 import {
@@ -11,9 +13,53 @@ import {
     GroupOutlined,
     ProductionQuantityLimitsOutlined,
 } from '@mui/icons-material';
-import { Grid } from '@mui/material';
+import { Grid, Typography } from '@mui/material';
+
+import useSWR from 'swr';
+
+interface Statistics {
+    numberOfOrders: number;
+    paidOrders: number;
+    notPaidOrders: number;
+    numberOfClients: number;
+    numberOfProducts: number;
+    productWithNotInventory: number;
+    lowInventory: number;
+}
+
+interface Respuesta {
+    ok: boolean;
+    message?: string;
+    statistics?: Statistics;
+}
 
 const DashboardPage = () => {
+    const { data, error } = useSWR<Respuesta>('/api/admin/dashboard', {
+        refreshInterval: 30 * 1000, // 30 segundos
+    });
+
+    const [refreshIn, setRefreshIn] = useState(30);
+
+    useEffect(() => {
+        const intervalo = setInterval(
+            () => setRefreshIn((oldValue) => oldValue - 1),
+            1000
+        );
+
+        return clearInterval(intervalo);
+    }, []);
+
+    if (!error && !data) {
+        return <></>;
+    }
+
+    if (error) {
+        console.log(error);
+        return <Typography>Error al cargar la información</Typography>;
+    }
+
+    const { statistics } = data!;
+
     return (
         <AdminLayout
             title='Dashboard'
@@ -28,7 +74,7 @@ const DashboardPage = () => {
                             sx={{ fontSize: 40 }} // Con esto modificamos el tamaño del icono
                         />
                     }
-                    title={1}
+                    title={statistics!.numberOfOrders}
                     subTitle='Ordenes Totales'
                 />
 
@@ -39,7 +85,7 @@ const DashboardPage = () => {
                             sx={{ fontSize: 40 }} // Con esto modificamos el tamaño del icono
                         />
                     }
-                    title={2}
+                    title={statistics!.paidOrders}
                     subTitle='Ordenes Pagados'
                 />
 
@@ -50,7 +96,7 @@ const DashboardPage = () => {
                             sx={{ fontSize: 40 }} // Con esto modificamos el tamaño del icono
                         />
                     }
-                    title={3}
+                    title={statistics!.notPaidOrders}
                     subTitle='Ordenes Pendientes'
                 />
 
@@ -61,7 +107,7 @@ const DashboardPage = () => {
                             sx={{ fontSize: 40 }} // Con esto modificamos el tamaño del icono
                         />
                     }
-                    title={3}
+                    title={statistics!.numberOfClients}
                     subTitle='Clientes'
                 />
 
@@ -72,7 +118,7 @@ const DashboardPage = () => {
                             sx={{ fontSize: 40 }} // Con esto modificamos el tamaño del icono
                         />
                     }
-                    title={3}
+                    title={statistics!.numberOfProducts}
                     subTitle='Productos'
                 />
 
@@ -83,7 +129,7 @@ const DashboardPage = () => {
                             sx={{ fontSize: 40 }} // Con esto modificamos el tamaño del icono
                         />
                     }
-                    title={24}
+                    title={statistics!.productWithNotInventory}
                     subTitle='Productos sin Stock'
                 />
 
@@ -94,7 +140,7 @@ const DashboardPage = () => {
                             sx={{ fontSize: 40 }} // Con esto modificamos el tamaño del icono
                         />
                     }
-                    title={24}
+                    title={statistics!.lowInventory}
                     subTitle='Bajo Inventario'
                 />
 
@@ -105,7 +151,7 @@ const DashboardPage = () => {
                             sx={{ fontSize: 40 }} // Con esto modificamos el tamaño del icono
                         />
                     }
-                    title={24}
+                    title={refreshIn}
                     subTitle='Actualización en: '
                 />
             </Grid>
@@ -114,5 +160,3 @@ const DashboardPage = () => {
 };
 
 export default DashboardPage;
-
-
