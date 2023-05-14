@@ -4,38 +4,44 @@ import { getToken } from 'next-auth/jwt';
 // Este middleware se va a ejecutar siempre antes de que se muestran las páginas de esta ruta
 // Aqui podemos leer las cookies
 export async function middleware(req: NextRequest, ev: NextFetchEvent) {
-    // const token = req.cookies.get('token')?.value ?? '';
-    // const newUrl = new URL(`/auth/login?p=${req.nextUrl.pathname}`, req.url);
-
-    // try {
-    //     await jwt.isValidToken(token);
-
-    //     return NextResponse.next();
-    // } catch (error) {
-    //     return NextResponse.redirect(newUrl);
-    // }
+    // Obtenemos la sesión de next auth
+    const session: any = await getToken({
+        req,
+        secret: process.env.NEXTAUTH_SECRET,
+    });
 
     const newUrl = req.nextUrl.clone();
     newUrl.pathname = '/auth/login';
     newUrl.search = `p=${req.nextUrl.pathname}`;
 
-    // Obtenemos la sesión de next auth
-    const session = await getToken({
-        req,
-        secret: process.env.NEXTAUTH_SECRET,
-    });
+    if (req.nextUrl.pathname.startsWith('/checkout')) {
+        // Si tenemos una sesión dejamos pasar al user
+        if (!session) {
+            return NextResponse.redirect(newUrl);
+        }
 
-    // Si tenemos una sesión dejamos pasar al user
-    if (session) {
+        // Si no lo redirigimos al login
         return NextResponse.next();
     }
 
-    // Si no lo redirigimos al login
-    return NextResponse.redirect(newUrl);
+    if (req.nextUrl.pathname.startsWith('/admin')) {
+        // Si tenemos una sesión dejamos pasar al user
+        if (!session) {
+            return NextResponse.redirect(newUrl);
+        }
+
+        const validRol = ['admin', 'super-user', 'SEO'];
+
+        if (!validRol.includes(session?.user?.role)) {
+            return NextResponse.redirect(req.nextUrl.origin);
+        }
+
+        return NextResponse.next();
+    }
 }
 
 // Aqui podemos especificar las rutas donde solo se ejecutará este middleware
 export const config = {
     // matcher: ['/api/:path*', '/api/entries/:path*'],
-    matcher: ['/checkout/:path*'],
+    matcher: ['/checkout/:path*', '/admin/:path*'],
 };

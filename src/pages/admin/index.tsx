@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 
 import { SummaryTitle } from '@/components/admin';
 import { AdminLayout } from '@/components/layouts';
@@ -16,6 +16,8 @@ import {
 import { Grid, Typography } from '@mui/material';
 
 import useSWR from 'swr';
+import { tesloApi } from '@/api';
+import { AuthContext } from '@/context';
 
 interface Statistics {
     numberOfOrders: number;
@@ -33,20 +35,32 @@ interface Respuesta {
     statistics?: Statistics;
 }
 
+const fetchWithToken = ([url, token]: [string, string]) =>
+    tesloApi
+        .get(url, { headers: { 'x-token': token } })
+        .then((res) => res.data);
+
 const DashboardPage = () => {
-    const { data, error } = useSWR<Respuesta>('/api/admin/dashboard', {
-        refreshInterval: 30 * 1000, // 30 segundos
-    });
+    const { user } = useContext(AuthContext);
+
+    const { data, error } = useSWR<Respuesta>(
+        ['http://localhost:3452/api/admin/dashboard', user?.token], // Parámetros que serán pasados el fetcher, deben ser en forma de lista
+        fetchWithToken, // función que hará el fetch a la api
+        {
+            refreshInterval: 30 * 1000, // 30 segundos
+        }
+    );
 
     const [refreshIn, setRefreshIn] = useState(30);
 
     useEffect(() => {
         const intervalo = setInterval(
-            () => setRefreshIn((oldValue) => oldValue - 1),
+            () =>
+                setRefreshIn((oldValue) => (oldValue > 0 ? oldValue - 1 : 30)),
             1000
         );
 
-        return clearInterval(intervalo);
+        return () => clearInterval(intervalo);
     }, []);
 
     if (!error && !data) {
