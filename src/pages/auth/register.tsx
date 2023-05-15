@@ -84,6 +84,7 @@ const RegisterPage = () => {
                             >
                                 Crear Cuenta
                             </Typography>
+
                             {showError && (
                                 <Chip
                                     label={message}

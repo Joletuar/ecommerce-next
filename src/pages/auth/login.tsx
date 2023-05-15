@@ -57,10 +57,16 @@ const LoginPage = () => {
         // router.replace(destination);
 
         // Función de next auth que se usa para logearse, require de un provider y las opciones, por defecto hace refresh esto
-        await signIn('credentials', {
-            email,
-            password,
-        });
+
+        try {
+            await signIn('credentials', {
+                email,
+                password,
+            });
+        } catch (error) {
+            setShowError(true);
+            setTimeout(() => setShowError(false), 2500);
+        }
     };
 
     return (
@@ -76,6 +82,7 @@ const LoginPage = () => {
                             >
                                 Iniciar Sesión
                             </Typography>
+
                             {showError && (
                                 <Chip
                                     label='Usuario o contaseña incorrectos'
