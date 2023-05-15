@@ -1,18 +1,25 @@
 import { tesloApi } from '@/api';
 import { AdminLayout } from '@/components/layouts';
+import { AuthContext } from '@/context';
 import { IUser } from '@/interfaces';
 import { PeopleAltOutlined } from '@mui/icons-material';
 import { Grid, MenuItem, Select } from '@mui/material';
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 
 import useSWR from 'swr';
 
-// De esta manera se indica el formato de como será la data dento del data grid
+const fetchWithToken = ([url, token]: [string, string]) =>
+    tesloApi
+        .get(url, { headers: { 'x-token': token } })
+        .then((res) => res.data);
 
 const UserPage = () => {
+    const { user } = useContext(AuthContext);
+
     const { data, error } = useSWR<{ ok: boolean; users: IUser[] }>(
-        'http://localhost:3452/api/users'
+        ['http://localhost:3452/api/admin/users', user?.token], // Parámetros que serán pasados el fetcher, deben ser en forma de lista
+        fetchWithToken // función que hará el fetch a la api
     );
 
     const [users, setUsers] = useState<IUser[]>([]);
