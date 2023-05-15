@@ -27,7 +27,7 @@ const columns: GridColDef[] = [
     },
     {
         field: 'total',
-        headerName: 'Monto total',
+        headerName: 'Monto total', //TODO: Usar la función que permite formatear cantidades
         width: 300,
     },
     {
@@ -74,7 +74,7 @@ const fetchWithToken = ([url, token]: [string, string]) =>
         .get(url, { headers: { 'x-token': token } })
         .then((res) => res.data);
 
-const orders = () => {
+const OrdersPage = () => {
     const { user } = useContext(AuthContext);
 
     const { data, error } = useSWR<{ ok: boolean; orders: IOrder[] }>(
@@ -112,4 +112,4 @@ const orders = () => {
     );
 };
 
-export default orders;
+export default OrdersPage;
