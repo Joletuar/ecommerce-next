@@ -60,6 +60,8 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
         register,
         handleSubmit,
         formState: { errors },
+        getValues, // Esta función obtiene todo el valor del formulario
+        setValue, // Permite establecer un valor de manera controlada, esto no dispara el rerender de React
     } = useForm<FormData>({
         defaultValues: product, // Hacemos que el formulario ya tenga como valor inicial el product obtenido en el GetServerSideProps
     });
@@ -158,8 +160,12 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
                             <FormLabel>Tipo</FormLabel>
                             <RadioGroup
                                 row
-                                // value={ status }
-                                // onChange={ onStatusChanged }
+                                value={getValues('type')} // Accedemos al valor del campo "type" usando la función
+                                onChange={(e) =>
+                                    setValue('type', e.target.value, {
+                                        shouldValidate: true, // dispara el rerender cada vez que cambia el valor
+                                    })
+                                } // Modificamos el valor del campo "gender", el tercer argumento permite enviar un arreglo opciones.
                             >
                                 {validTypes.map((option) => (
                                     <FormControlLabel
@@ -176,8 +182,12 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
                             <FormLabel>Género</FormLabel>
                             <RadioGroup
                                 row
-                                // value={ status }
-                                // onChange={ onStatusChanged }
+                                value={getValues('gender')} // Accedemos al valor del campo "gender" usando la función
+                                onChange={(e) =>
+                                    setValue('gender', e.target.value, {
+                                        shouldValidate: true, // dispara el rerender cada vez que cambia el valor
+                                    })
+                                } // Modificamos el valor del campo "gender", el tercer argumento permite enviar un arreglo opciones.
                             >
                                 {validGender.map((option) => (
                                     <FormControlLabel
