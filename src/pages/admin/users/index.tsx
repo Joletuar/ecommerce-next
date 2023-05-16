@@ -36,18 +36,23 @@ const UserPage = () => {
         // Para mejora la exp de usuarios
         const updatedUsers = users.map((user) => ({
             ...user,
-            rol: userId === user._id ? rol : user.role,
+            role: userId === user._id ? rol : user.role,
         }));
 
         setUsers(updatedUsers);
 
         try {
-            await tesloApi.put('/admin/users', {
-                body: {
+            await tesloApi.put(
+                '/admin/users',
+                {
                     userId,
                     rol,
                 },
-            });
+
+                {
+                    headers: { 'x-token': user!.token },
+                }
+            );
         } catch (error) {
             setUsers(prevUsers);
             console.log(error);

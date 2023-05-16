@@ -42,7 +42,7 @@ const columns: GridColDef[] = [
         renderCell: ({ row }: GridRenderCellParams) => {
             return (
                 <a
-                    href={`/admin/order/${row.id}`}
+                    href={`/admin/orders/${row.id}`}
                     target='_blank'
                     rel='noreferrer'
                 >

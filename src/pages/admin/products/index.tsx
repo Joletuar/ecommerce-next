@@ -19,7 +19,7 @@ const columns: GridColDef[] = [
         renderCell: ({ row }: GridRenderCellParams) => {
             return (
                 <a
-                    href={`/products/${row.slug}`}
+                    href={`/product/${row.slug}`}
                     target='_blank'
                     rel='noreferrer'
                 >
@@ -28,7 +28,7 @@ const columns: GridColDef[] = [
                         alt={`${row.title}`}
                         component='img'
                         className='fadeIn'
-                        image={`/producs/${row.img}`}
+                        image={`/products/${row.img}`}
                     />
                 </a>
             );
@@ -90,7 +90,7 @@ const ProductsPage = () => {
 
     const rows = data!.products.map((product) => ({
         id: product._id,
-        img: product.images[0],
+        img: product.images[1],
         title: product.title,
         gender: product.gender,
         type: product.type,

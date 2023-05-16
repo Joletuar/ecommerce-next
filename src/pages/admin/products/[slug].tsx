@@ -112,6 +112,7 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
                             variant='filled'
                             fullWidth
                             multiline
+                            rows={5}
                             sx={{ mb: 1 }}
                             {...register('description', {
                                 required: 'Este campo es requerido',
@@ -279,6 +280,7 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
                                 label='Es necesario al 2 imagenes'
                                 color='error'
                                 variant='outlined'
+                                sx={{ mb: 3 }}
                             />
 
                             <Grid container spacing={2}>
@@ -314,11 +316,14 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
 export const getServerSideProps: GetServerSideProps = async ({ query }) => {
     const { slug = '' } = query;
 
-    const product = await tesloApi.get(
-        `http://localhost:3452/api/products/${slug}`
-    );
+    const { data } = await tesloApi.get<{
+        ok: boolean;
+        producto?: IProduct;
+    }>(`http://localhost:3452/api/products/${slug}`);
 
-    if (!product) {
+    const { ok, producto: product } = data;
+
+    if (!ok) {
         return {
             redirect: {
                 destination: '/admin/products',
