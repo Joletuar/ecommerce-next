@@ -1,9 +1,12 @@
-import { FC } from 'react';
+import { FC, useContext, useEffect, useState } from 'react';
 import { GetServerSideProps } from 'next';
+import { AuthContext } from '@/context';
+import { useRouter } from 'next/router';
+import { useForm } from 'react-hook-form';
+
 import { AdminLayout } from '@/components/layouts';
 import { IProduct } from '@/interfaces';
 import { tesloApi } from '@/api';
-import { useForm } from 'react-hook-form';
 
 import {
     DriveFileRenameOutline,
@@ -55,20 +58,144 @@ interface Props {
     product: IProduct;
 }
 
+const fetchWithToken = ([url, token]: [string, string]) =>
+    tesloApi
+        .get(url, { headers: { 'x-token': token } })
+        .then((res) => res.data);
+
 const ProductAdminPage: FC<Props> = ({ product }) => {
+    const { user } = useContext(AuthContext);
+    const router = useRouter();
+
+    const [newTag, setNewTag] = useState('');
+    const [isUpdating, setIsUpdating] = useState(false);
+
     const {
         register,
         handleSubmit,
         formState: { errors },
         getValues, // Esta función obtiene todo el valor del formulario
         setValue, // Permite establecer un valor de manera controlada, esto no dispara el rerender de React
+        watch, // Permite estar al pendiente de los cambios de un valor
     } = useForm<FormData>({
         defaultValues: product, // Hacemos que el formulario ya tenga como valor inicial el product obtenido en el GetServerSideProps
     });
 
-    const onDeleteTag = (tag: string) => {};
+    useEffect(() => {
+        // El watch es un observable. Esto indica que siempre va estar ejecutandose aunque salgamos de la página
+        // Por estos motivos hay que limpiarlo
 
-    const onSubmitForm = async (form: FormData) => {};
+        const subscription = watch((value, { name, type }) => {
+            // console.log({ value, name, type });
+
+            // Generación del slug de manera automática
+            if (name === 'title') {
+                const newSlug =
+                    value.title
+                        ?.trim() // Quitamos espacios atras y adelante
+                        .replaceAll(' ', '_') // Reemplazamos los espacios por guiones bajos
+                        .replaceAll("'", '') // Reemplazamos los apóstrofes por guiones bajos
+                        .toLocaleLowerCase() || '';
+
+                setValue('slug', newSlug);
+            }
+        });
+
+        return () => {
+            // Nos desuscribimos
+            subscription.unsubscribe();
+        };
+    }, [watch, setValue]);
+
+    const onNewTag = () => {
+        // Limpiamos el tag almacena en el estado
+        const newTagValue = newTag.toLocaleLowerCase().trim();
+
+        // Limpiamos el textfield
+        setNewTag('');
+
+        // Obtenemos los tags actuales
+        const currentTags = getValues('tags');
+
+        // El el tag ya existe, no hacemos nada
+        if (currentTags.includes(newTagValue)) return;
+
+        // Agregamos el nuevo tag al arreglo de tags
+        currentTags.push(newTagValue);
+
+        // Debido a que estamos mutando un estado, provoca que se renderice automáticamente
+        // setValue('tags', currentTags, {
+        //     shouldValidate: true,
+        // });
+    };
+
+    const onDeleteTag = (tag: string) => {
+        // Obtenemos los tags actuales
+        const prevTags = getValues('tags');
+
+        // Eliminamos el tag
+        setValue(
+            'tags',
+            prevTags.filter((ele) => ele !== tag),
+            {
+                shouldValidate: true,
+            }
+        );
+    };
+
+    const onChangeSize = (size: string) => {
+        const currentSizes = getValues('sizes');
+
+        if (!currentSizes.includes(size)) {
+            return setValue(
+                'sizes',
+                currentSizes.filter((s) => s !== size),
+                {
+                    shouldValidate: true,
+                }
+            );
+        }
+
+        setValue('sizes', [...currentSizes, size], {
+            shouldValidate: true,
+        });
+    };
+
+    const onSubmitForm = async (form: FormData) => {
+        if (form.images.length < 2) return 'Mínimo 2 imágenes';
+
+        setIsUpdating(true);
+
+        try {
+            const { data } = await tesloApi.put<{
+                ok: boolean;
+                product: IProduct;
+            }>(
+                'http://localhost:3452/api/admin/products',
+                {
+                    product: form,
+                },
+                {
+                    headers: {
+                        'x-token': user?.token,
+                    },
+                }
+            );
+
+            console.log(data);
+
+            const { ok, product } = data;
+
+            if (!ok) {
+                // return router.reload();
+            }
+
+            setIsUpdating(false);
+        } catch (error) {
+            console.log(error);
+            setIsUpdating(false);
+        }
+    };
 
     return (
         <AdminLayout
@@ -83,6 +210,7 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
                         startIcon={<SaveOutlined />}
                         sx={{ width: '150px' }}
                         type='submit'
+                        disabled={isUpdating}
                     >
                         Guardar
                     </Button>
@@ -206,8 +334,15 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
                             {validSizes.map((size) => (
                                 <FormControlLabel
                                     key={size}
-                                    control={<Checkbox />}
+                                    control={
+                                        <Checkbox
+                                            checked={getValues(
+                                                'sizes'
+                                            ).includes(size)}
+                                        />
+                                    }
                                     label={size}
+                                    onChange={() => onChangeSize(size)}
                                 />
                             ))}
                         </FormGroup>
@@ -223,7 +358,7 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
                             {...register('slug', {
                                 required: 'Este campo es requerido',
                                 validate: (val) =>
-                                    val.trim().includes('')
+                                    val.trim().includes(' ')
                                         ? 'El slug no puede contener espacios'
                                         : undefined,
                             })}
@@ -237,6 +372,12 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
                             fullWidth
                             sx={{ mb: 1 }}
                             helperText='Presiona [spacebar] para agregar'
+                            onChange={(e) => setNewTag(e.target.value)}
+                            value={newTag}
+                            // Cuando el usuario presione la tecla spaces agregamos la etiqueta
+                            onKeyDown={(e) => {
+                                e.key === ' ' ? onNewTag() : null;
+                            }}
                         />
 
                         <Box
@@ -249,7 +390,7 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
                             }}
                             component='ul'
                         >
-                            {product.tags.map((tag) => {
+                            {getValues('tags').map((tag) => {
                                 return (
                                     <Chip
                                         key={tag}
