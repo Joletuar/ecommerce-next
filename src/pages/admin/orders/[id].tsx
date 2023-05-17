@@ -42,7 +42,7 @@ const OrderPage: NextPage<Props> = ({ order }) => {
     return (
         <AdminLayout
             title={`Orden ${_id}`}
-            subTitle={`Resumen de la orden ${_id}`}
+            subTitle={`Resumen de la orden`}
             icon={<ConfirmationNumberOutlined />}
         >
             <Grid container justifyContent='space-between' className='fadeIn'>

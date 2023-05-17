@@ -58,14 +58,9 @@ interface Props {
     product: IProduct;
 }
 
-const fetchWithToken = ([url, token]: [string, string]) =>
-    tesloApi
-        .get(url, { headers: { 'x-token': token } })
-        .then((res) => res.data);
-
 const ProductAdminPage: FC<Props> = ({ product }) => {
     const { user } = useContext(AuthContext);
-    const router = useRouter();
+    // const router = useRouter();
 
     const [newTag, setNewTag] = useState('');
     const [isUpdating, setIsUpdating] = useState(false);
@@ -457,12 +452,25 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
 export const getServerSideProps: GetServerSideProps = async ({ query }) => {
     const { slug = '' } = query;
 
-    const { data } = await tesloApi.get<{
-        ok: boolean;
-        producto?: IProduct;
-    }>(`http://localhost:3452/api/products/${slug}`);
+    let dataTemp;
 
-    const { ok, producto: product } = data;
+    if (slug === 'new') {
+        const { data } = await tesloApi.get<{
+            ok: boolean;
+            producto?: IProduct;
+        }>(`http://localhost:3452/api/admin/products/new`);
+
+        dataTemp = data;
+    } else {
+        const { data } = await tesloApi.get<{
+            ok: boolean;
+            producto?: IProduct;
+        }>(`http://localhost:3452/api/products/${slug}`);
+
+        dataTemp = data;
+    }
+
+    const { ok, producto: product } = dataTemp;
 
     if (!ok) {
         return {

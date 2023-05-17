@@ -4,8 +4,8 @@ import { tesloApi } from '@/api';
 import { AdminLayout } from '@/components/layouts';
 import { AuthContext } from '@/context';
 import { IProduct } from '@/interfaces';
-import { CategoryOutlined } from '@mui/icons-material';
-import { CardMedia, Grid, Link } from '@mui/material';
+import { AddOutlined, CategoryOutlined } from '@mui/icons-material';
+import { Box, Button, CardMedia, Grid, Link } from '@mui/material';
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import { useContext } from 'react';
 
@@ -106,6 +106,16 @@ const ProductsPage = () => {
             subTitle='Mantenimiento de productos'
             icon={<CategoryOutlined />}
         >
+            <Box display='flex' justifyContent='end' sx={{ mb: 2 }}>
+                <Button
+                    startIcon={<AddOutlined />}
+                    color='secondary'
+                    href='/admin/products/new' // Cuando se usa el "href" en botones se convierten en <a><a/> para navegar a la dirección
+                >
+                    Crear Producto
+                </Button>
+            </Box>
+
             <Grid container className='fadeIn'>
                 <Grid item xs={12} sx={{ height: 650, width: '100%' }}>
                     {/* Este componente siempre necesita las columnas y rows
