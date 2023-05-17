@@ -1,4 +1,11 @@
-import { FC, useContext, useEffect, useState } from 'react';
+import {
+    ChangeEvent,
+    FC,
+    useContext,
+    useEffect,
+    useRef,
+    useState,
+} from 'react';
 import { GetServerSideProps } from 'next';
 import { AuthContext } from '@/context';
 import { useRouter } from 'next/router';
@@ -60,10 +67,10 @@ interface Props {
 
 const ProductAdminPage: FC<Props> = ({ product }) => {
     const { user } = useContext(AuthContext);
-    const router = useRouter();
-
     const [newTag, setNewTag] = useState('');
     const [isUpdating, setIsUpdating] = useState(false);
+    const router = useRouter();
+    const fileInputRef = useRef<HTMLInputElement>(null); // Apuntamos hacia el elemento html respectivo
 
     const {
         register,
@@ -179,6 +186,23 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
         } catch (error) {
             console.log(error);
             setIsUpdating(false);
+        }
+    };
+
+    const onFileSelected = async ({
+        target,
+    }: ChangeEvent<HTMLInputElement>) => {
+        if (!target.files || target.files.length === 0) {
+            return;
+        }
+
+        try {
+            // Recorremos los files seleccionados por inputFile
+            for (const file of target.files) {
+                const formData = new FormData();
+            }
+        } catch (error) {
+            console.log(error);
         }
     };
 
@@ -398,9 +422,20 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
                                 fullWidth
                                 startIcon={<UploadOutlined />}
                                 sx={{ mb: 3 }}
+                                onClick={() => fileInputRef.current?.click()}
                             >
                                 Cargar imagen
                             </Button>
+
+                            {/* Procedimiento para generar un elemento que nos permita seleccionar un archivo */}
+                            <input
+                                onChange={onFileSelected} // Cuando este input cambie disparamos un evento que nos permita recuperar los nombres de los files seleccionados
+                                ref={fileInputRef} // Creamos la referencia al elemento html
+                                style={{ display: 'none' }} // Ponemos este display para que no se muestre
+                                type='file'
+                                multiple
+                                accept='image/png, image/gif, image/jpeg'
+                            />
 
                             <Chip
                                 label='Es necesario al 2 imagenes'
