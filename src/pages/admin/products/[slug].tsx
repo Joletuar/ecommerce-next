@@ -60,7 +60,7 @@ interface Props {
 
 const ProductAdminPage: FC<Props> = ({ product }) => {
     const { user } = useContext(AuthContext);
-    // const router = useRouter();
+    const router = useRouter();
 
     const [newTag, setNewTag] = useState('');
     const [isUpdating, setIsUpdating] = useState(false);
@@ -162,30 +162,20 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
         setIsUpdating(true);
 
         try {
-            const { data } = await tesloApi.put<{
-                ok: boolean;
-                product: IProduct;
-            }>(
-                'http://localhost:3452/api/admin/products',
-                {
-                    product: form,
+            const { data } = await tesloApi<{ ok: boolean }>({
+                url: '/admin/products',
+                method: form._id ? 'PUT' : 'POST',
+                data: form,
+                headers: {
+                    'x-token': user?.token,
                 },
-                {
-                    headers: {
-                        'x-token': user?.token,
-                    },
-                }
-            );
+            });
 
-            console.log(data);
-
-            const { ok, product } = data;
-
-            if (!ok) {
-                // return router.reload();
+            if (!form._id) {
+                router.replace(`/admin/products/${form.slug}`);
+            } else {
+                setIsUpdating(false);
             }
-
-            setIsUpdating(false);
         } catch (error) {
             console.log(error);
             setIsUpdating(false);
@@ -458,7 +448,7 @@ export const getServerSideProps: GetServerSideProps = async ({ query }) => {
         const { data } = await tesloApi.get<{
             ok: boolean;
             producto?: IProduct;
-        }>(`http://localhost:3452/api/admin/products/new`);
+        }>(`http://localhost:3452/api/products/new`);
 
         dataTemp = data;
     } else {
