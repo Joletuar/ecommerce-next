@@ -36,8 +36,6 @@ import {
     FormGroup,
     FormLabel,
     Grid,
-    ListItem,
-    Paper,
     Radio,
     RadioGroup,
     TextField,
@@ -148,7 +146,7 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
     const onChangeSize = (size: string) => {
         const currentSizes = getValues('sizes');
 
-        if (!currentSizes.includes(size)) {
+        if (currentSizes.includes(size)) {
             return setValue(
                 'sizes',
                 currentSizes.filter((s) => s !== size),
@@ -169,10 +167,10 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
         setIsUpdating(true);
 
         try {
-            const { data } = await tesloApi<{ ok: boolean }>({
+            await tesloApi<{ ok: boolean }>({
                 url: '/admin/products',
                 method: form._id ? 'PUT' : 'POST',
-                data: form,
+                data: { product: form },
                 headers: {
                     'x-token': user?.token,
                 },
@@ -180,6 +178,7 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
 
             if (!form._id) {
                 router.replace(`/admin/products/${form.slug}`);
+                router.push('/admin/products');
             } else {
                 setIsUpdating(false);
             }
@@ -200,6 +199,7 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
             // Recorremos los files seleccionados por inputFile
             for (const file of target.files) {
                 const formData = new FormData();
+                // console.log(file);
             }
         } catch (error) {
             console.log(error);
