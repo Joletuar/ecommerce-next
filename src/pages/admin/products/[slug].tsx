@@ -199,7 +199,16 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
             // Recorremos los files seleccionados por inputFile
             for (const file of target.files) {
                 const formData = new FormData();
-                // console.log(file);
+                formData.append('file', file);
+
+                const { data } = await tesloApi.post<{
+                    ok: boolean;
+                    message: string;
+                }>('/admin/upload', formData, {
+                    headers: {
+                        'x-token': user?.token,
+                    },
+                });
             }
         } catch (error) {
             console.log(error);
