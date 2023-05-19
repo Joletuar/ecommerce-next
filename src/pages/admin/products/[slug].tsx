@@ -203,16 +203,30 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
 
                 const { data } = await tesloApi.post<{
                     ok: boolean;
-                    message: string;
+                    image_url: string;
                 }>('/admin/upload', formData, {
                     headers: {
                         'x-token': user?.token,
                     },
                 });
+
+                setValue('images', [...getValues('images'), data.image_url], {
+                    shouldValidate: true,
+                });
             }
         } catch (error) {
             console.log(error);
         }
+    };
+
+    const onDeleteImag = async (img: string) => {
+        setValue(
+            'images',
+            getValues('images').filter((i) => i !== img),
+            {
+                shouldValidate: true,
+            }
+        );
     };
 
     return (
@@ -450,11 +464,17 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
                                 label='Es necesario al 2 imagenes'
                                 color='error'
                                 variant='outlined'
-                                sx={{ mb: 3 }}
+                                sx={{
+                                    mb: 3,
+                                    display:
+                                        getValues('images').length < 2
+                                            ? 'flex'
+                                            : 'none',
+                                }}
                             />
 
                             <Grid container spacing={2}>
-                                {product.images.map((img) => (
+                                {getValues('images').map((img) => (
                                     <Grid item xs={4} sm={3} key={img}>
                                         <Card>
                                             <CardMedia
@@ -464,7 +484,13 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
                                                 alt={img}
                                             />
                                             <CardActions>
-                                                <Button fullWidth color='error'>
+                                                <Button
+                                                    fullWidth
+                                                    color='error'
+                                                    onClick={() =>
+                                                        onDeleteImag(img)
+                                                    }
+                                                >
                                                     Borrar
                                                 </Button>
                                             </CardActions>
