@@ -5,7 +5,7 @@ import { AdminLayout } from '@/components/layouts';
 import { AuthContext } from '@/context';
 import { IProduct } from '@/interfaces';
 import { AddOutlined, CategoryOutlined } from '@mui/icons-material';
-import { Box, Button, CardMedia, Grid, Link } from '@mui/material';
+import { Box, Button, CardMedia, Grid, Link, Typography } from '@mui/material';
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import { useContext } from 'react';
 
@@ -87,6 +87,10 @@ const ProductsPage = () => {
     );
 
     if (!data && !error) return <></>;
+
+    if (error) {
+        return <Typography>Error al cargar la información</Typography>;
+    }
 
     const rows = data!.products.map((product) => ({
         id: product._id,

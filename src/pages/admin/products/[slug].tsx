@@ -183,7 +183,6 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
                 setIsUpdating(false);
             }
         } catch (error) {
-            console.log(error);
             setIsUpdating(false);
         }
     };
@@ -209,6 +208,8 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
                         'x-token': user?.token,
                     },
                 });
+
+                console.log(data);
 
                 setValue('images', [...getValues('images'), data.image_url], {
                     shouldValidate: true,
@@ -271,7 +272,7 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
                             label='Descripción'
                             variant='filled'
                             fullWidth
-                            multiline
+                            multiline={false}
                             rows={5}
                             sx={{ mb: 1 }}
                             {...register('description', {
@@ -480,7 +481,7 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
                                             <CardMedia
                                                 component='img'
                                                 className='fadeIn'
-                                                image={`/products/${img}`}
+                                                image={img}
                                                 alt={img}
                                             />
                                             <CardActions>
