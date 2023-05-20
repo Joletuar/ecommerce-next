@@ -106,7 +106,7 @@ export default HistoryPage;
 
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {
     const session: any = await getSession({ req });
-    const id = session.user._id;
+    const id = session?.user._id || session?.user.id;
 
     if (!session) {
         return {
@@ -135,9 +135,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
             };
         }
 
-        orders = orders?.filter(
-            (order) => order?.user?.toString() === session.user._id
-        );
+        orders = orders?.filter((order) => order?.user?.toString() === id);
 
         return {
             props: { orders },

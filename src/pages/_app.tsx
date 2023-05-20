@@ -15,30 +15,32 @@ export default function App({ Component, pageProps }: AppProps) {
             {/* Aqui llamamos nuestro provdier de autenticación */}
             <SessionProvider>
                 {/* Provider de Paypal */}
-                <PayPalScriptProvider
-                    options={{
-                        'client-id':
-                            process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID || '',
-                    }}
-                >
-                    <SWRConfig
-                        value={{
-                            fetcher: (resource, init) =>
-                                fetch(resource, init).then((res) => res.json()),
+                <AuthProvider>
+                    <PayPalScriptProvider
+                        options={{
+                            'client-id':
+                                process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID || '',
                         }}
                     >
-                        <UiProvider>
-                            <AuthProvider>
+                        <SWRConfig
+                            value={{
+                                fetcher: (resource, init) =>
+                                    fetch(resource, init).then((res) =>
+                                        res.json()
+                                    ),
+                            }}
+                        >
+                            <UiProvider>
                                 <CartProvider>
                                     <ThemeProvider theme={lightTheme}>
                                         <CssBaseline />
                                         <Component {...pageProps} />
                                     </ThemeProvider>
                                 </CartProvider>
-                            </AuthProvider>
-                        </UiProvider>
-                    </SWRConfig>
-                </PayPalScriptProvider>
+                            </UiProvider>
+                        </SWRConfig>
+                    </PayPalScriptProvider>
+                </AuthProvider>
             </SessionProvider>
         </>
     );

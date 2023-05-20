@@ -1,9 +1,9 @@
 import { tesloApi } from '@/api';
 import { AdminLayout } from '@/components/layouts';
 import { AuthContext } from '@/context';
-import { IOrder } from '@/interfaces';
+import { IOrder, IUser } from '@/interfaces';
 import { ConfirmationNumberOutlined } from '@mui/icons-material';
-import { Chip, Grid } from '@mui/material';
+import { Chip, Grid, Typography } from '@mui/material';
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import { useContext } from 'react';
 
@@ -84,15 +84,23 @@ const OrdersPage = () => {
 
     if (!data && !error) return <></>;
 
-    const rows = data!.orders.map((order) => ({
-        id: order._id,
-        email: user?.email,
-        isPaid: order.isPaid,
-        name: user?.name,
-        total: order.total,
-        noProducts: order.numberOfItems,
-        createdAt: order.createdAt,
-    }));
+    if (error) {
+        return <Typography>Error al cargar la información</Typography>;
+    }
+
+    const rows = data!.orders.map((order) => {
+        const { email, name } = order.user as IUser;
+
+        return {
+            id: order._id,
+            email,
+            isPaid: order.isPaid,
+            name,
+            total: order.total,
+            noProducts: order.numberOfItems,
+            createdAt: order.createdAt,
+        };
+    });
 
     return (
         <AdminLayout

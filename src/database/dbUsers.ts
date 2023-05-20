@@ -20,6 +20,7 @@ export const checkUserEmailPassword = async (
 
         // Obtenemos los datos
         const { user, ok, token } = data;
+        console.log(user);
 
         // Si no es ok entonces retornamos false
         if (!ok) {
@@ -82,6 +83,7 @@ export const oAuthToDbUser = async (oAuthEmail: string, oAuthName: string) => {
 
                     // Obtenemos los datos
                     const { user, ok, token } = data;
+                    console.log(user);
 
                     // Si no es ok entonces retornamos false
                     if (ok) {
