@@ -27,6 +27,7 @@ export default NextAuth({
                     placeholder: '*****',
                 },
             },
+            // Función que permite setear el usuario obtenido de nuestro login personalizado
             async authorize(credentials, req) {
                 const result = await dbUsers.checkUserEmailPassword(
                     credentials!.email,
