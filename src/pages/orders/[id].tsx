@@ -251,7 +251,6 @@ export const getServerSideProps: GetServerSideProps = async ({
     const { id = '' } = query;
 
     const session: any = await getSession({ req });
-    console.log('--->', session);
 
     if (!session) {
         return {

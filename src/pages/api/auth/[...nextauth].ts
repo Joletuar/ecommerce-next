@@ -76,6 +76,7 @@ export default NextAuth({
             if (account) {
                 // Seteamos el token que viene de la cuenta
                 token.accesToken = account.access_token;
+                console.log({ acces_token: account?.access_token });
 
                 switch (account.type) {
                     // Si utilizo alguna red para autenticarse
@@ -85,11 +86,14 @@ export default NextAuth({
                             user?.name || ''
                         );
 
+                        token.id = user.id;
+
                         break;
 
                     // Si el tipo es de credentials el token user será igual al user que viene
                     case 'credentials':
                         token.user = user;
+                        token.id = user.id;
                         break;
                 }
             }

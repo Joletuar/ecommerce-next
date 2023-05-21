@@ -1,6 +1,8 @@
 import { GetServerSideProps, NextPage } from 'next';
 import NextLink from 'next/link';
 import { getSession } from 'next-auth/react';
+// import authOptions from '../api/auth/[...nextauth]';
+// import { getServerSession } from 'next-auth';
 
 import { ShopLayout } from '@/components/layouts';
 
@@ -104,8 +106,10 @@ const HistoryPage: NextPage<Props> = ({ orders }) => {
 
 export default HistoryPage;
 
-export const getServerSideProps: GetServerSideProps = async ({ req }) => {
+export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
     const session: any = await getSession({ req });
+    // const session: any = await getServerSession(req, res, authOptions);
+
     const id = session?.user.id;
 
     if (!session) {
