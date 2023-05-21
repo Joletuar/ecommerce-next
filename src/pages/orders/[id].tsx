@@ -251,8 +251,7 @@ export const getServerSideProps: GetServerSideProps = async ({
     const { id = '' } = query;
 
     const session: any = await getSession({ req });
-
-    console.log(session);
+    console.log('--->', session);
 
     if (!session) {
         return {
@@ -281,7 +280,7 @@ export const getServerSideProps: GetServerSideProps = async ({
             };
         }
 
-        const idSession = session!.user?.id;
+        const idSession = session?.user.id;
 
         if (order?.user?.toString() != idSession) {
             return {
@@ -298,8 +297,6 @@ export const getServerSideProps: GetServerSideProps = async ({
             },
         };
     } catch (error) {
-        // console.log(error);
-
         return {
             redirect: {
                 destination: `/`,

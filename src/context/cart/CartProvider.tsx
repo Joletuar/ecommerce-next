@@ -1,4 +1,4 @@
-import { FC, useContext, useEffect, useReducer } from 'react';
+import { FC, useContext, useEffect, useReducer, useState } from 'react';
 import { CartContext, cartReducer } from './';
 import { ICartOrder, ICartProduct, IOrder } from '@/interfaces';
 
@@ -44,6 +44,7 @@ interface Props {
 export const CartProvider: FC<Props> = ({ children }) => {
     const [state, dispatch] = useReducer(cartReducer, CART_INITIAL_STATE);
     const { user } = useContext(AuthContext);
+    const [firsTime, setFirsTime] = useState(true);
 
     // Cargamos la cookies del carrito
     useEffect(() => {
@@ -65,10 +66,38 @@ export const CartProvider: FC<Props> = ({ children }) => {
         }
     }, []);
 
+    // Función que carga el shippingAddress de las cookies y las guarda en el contexto
+    useEffect(() => {
+        if (Cookie.get('firstName')) {
+            const addressCookies = {
+                firstName: Cookie.get('firstName') || '',
+                lastName: Cookie.get('lastName') || '',
+                address: Cookie.get('address') || '',
+                address2: Cookie.get('address2') || '',
+                zip: Cookie.get('zip') || '',
+                city: Cookie.get('city') || '',
+                country: Cookie.get('country') || 'ECU',
+                phone: Cookie.get('phone') || '',
+            };
+
+            dispatch({
+                type: '[Cart] - Load address from cookies',
+                payload: addressCookies,
+            });
+        }
+    }, []);
+
     // Actualizamos las cookies del carrito cuando se modifique un producto
     useEffect(() => {
-        // Verificamos que no esté vacío
-        if (!state.cart.length) return;
+        if (firsTime) {
+            const cookiesProduct = Cookie.get('cart')
+                ? JSON.parse(Cookie.get('cart')!)
+                : [];
+
+            Cookie.set('cart', JSON.stringify(cookiesProduct));
+            setFirsTime(false);
+            return;
+        }
 
         // Almacenamos la cookie con el nombre "cart"
         Cookie.set('cart', JSON.stringify(state.cart)); // Lo serializamos porque dentro de las cokkies no se puden almacenar objetos, solo strings
@@ -76,7 +105,14 @@ export const CartProvider: FC<Props> = ({ children }) => {
 
     // Modificamos las cantidades de los totales cuando se modifique un producto
     useEffect(() => {
-        if (!state.cart.length) return;
+        if (!state.cart.length || firsTime) {
+            // Realizamos la accion de actualizar los valores
+            dispatch({
+                type: '[Cart] - Update order values',
+                payload: { quantity: 0, subtotal: 0, tax: 0, total: 0 },
+            });
+            return;
+        }
 
         // Obtnemos la cantidad de los productos del carrito
         const quantity = state.cart.reduce(
@@ -103,27 +139,6 @@ export const CartProvider: FC<Props> = ({ children }) => {
             payload: { quantity, subtotal, tax, total },
         });
     }, [state.cart]);
-
-    // Función que carga el shippingAddress de las cookies y las guarda en el contexto
-    useEffect(() => {
-        if (Cookie.get('firstName')) {
-            const addressCookies = {
-                firstName: Cookie.get('firstName') || '',
-                lastName: Cookie.get('lastName') || '',
-                address: Cookie.get('address') || '',
-                address2: Cookie.get('address2') || '',
-                zip: Cookie.get('zip') || '',
-                city: Cookie.get('city') || '',
-                country: Cookie.get('country') || '',
-                phone: Cookie.get('phone') || '',
-            };
-
-            dispatch({
-                type: '[Cart] - Load address from cookies',
-                payload: addressCookies,
-            });
-        }
-    }, []);
 
     // Actualizar shippign address
     const updateAddress = (address: shippingAddress) => {

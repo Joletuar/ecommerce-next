@@ -106,7 +106,7 @@ export default HistoryPage;
 
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {
     const session: any = await getSession({ req });
-    const id = session?.user._id || session?.user.id;
+    const id = session?.user.id;
 
     if (!session) {
         return {

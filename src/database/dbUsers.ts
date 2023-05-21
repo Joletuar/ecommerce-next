@@ -53,7 +53,7 @@ export const oAuthToDbUser = async (oAuthEmail: string, oAuthName: string) => {
         if (ok) {
             const { _id, name, email, role } = user;
             return {
-                _id,
+                id: _id,
                 name,
                 email,
                 role,
@@ -87,7 +87,7 @@ export const oAuthToDbUser = async (oAuthEmail: string, oAuthName: string) => {
                     if (ok) {
                         const { _id, name, email, role } = user;
                         return {
-                            _id,
+                            id: _id,
                             name,
                             email,
                             role,

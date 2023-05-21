@@ -61,8 +61,6 @@ const LoginPage = () => {
         // Función de next auth que se usa para logearse, require de un provider y las opciones, por defecto hace refresh esto
 
         try {
-            console.log(email, password);
-
             await signIn('credentials', {
                 email,
                 password,
@@ -194,8 +192,6 @@ export const getServerSideProps: GetServerSideProps = async ({
             image: string;
         };
     };
-
-    console.log(session);
 
     // Obtenemos el query que viene delo login
     const { p = '/' } = query;
