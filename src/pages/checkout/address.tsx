@@ -1,9 +1,10 @@
+import { useContext, useState } from 'react';
 import { useRouter } from 'next/router';
 
 import { useForm } from 'react-hook-form';
+import { CartContext } from '@/context';
 import { ShopLayout } from '@/components/layouts';
 import { countries } from '@/utils';
-
 import Cookie from 'js-cookie';
 
 import {
@@ -15,8 +16,6 @@ import {
     TextField,
     Typography,
 } from '@mui/material';
-import { useContext } from 'react';
-import { CartContext } from '@/context';
 
 type FormData = {
     firstName: string;
@@ -25,7 +24,6 @@ type FormData = {
     address2?: string;
     zip: string;
     city: string;
-    country: string;
     phone: string;
 };
 
@@ -38,16 +36,16 @@ const getAddressFromCookies = (): FormData => {
         address2: Cookie.get('address2') || '',
         zip: Cookie.get('zip') || '',
         city: Cookie.get('city') || '',
-        country: Cookie.get('country') || '',
         phone: Cookie.get('phone') || '',
     };
 };
 
 const AddressPage = () => {
     const router = useRouter();
-    // const [countryCookie, setCountryCookie] = useState(
-    //     Cookie.get('country') || 'ECU'
-    // );
+
+    const [countryCookies, setCountryCookies] = useState(
+        Cookie.get('country') || 'ECU'
+    );
 
     const {
         register, // Con esto enlazamos los campos
@@ -67,7 +65,6 @@ const AddressPage = () => {
         address2 = '',
         zip,
         city,
-        country,
         phone,
     }: FormData) => {
         updateAddress({
@@ -77,7 +74,7 @@ const AddressPage = () => {
             address2,
             zip,
             city,
-            country,
+            country: countryCookies,
             phone,
         });
 
@@ -195,11 +192,10 @@ const AddressPage = () => {
                                 select
                                 variant='filled'
                                 label='País'
-                                {...register('country')}
-                                // value={countryCookie}
-                                // onChange={(e) =>
-                                //     setCountryCookie(e.target.value)
-                                // }
+                                value={countryCookies}
+                                onChange={({ target }) =>
+                                    setCountryCookies(target.value)
+                                }
                             >
                                 {countries.map((country) => (
                                     // MenuItem: es un componente que corresponde a un itemn dentro del menu desplegable

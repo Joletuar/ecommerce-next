@@ -4,7 +4,9 @@ import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 
 import { useForm } from 'react-hook-form';
-import { getSession, signIn } from 'next-auth/react';
+import { signIn } from 'next-auth/react';
+import authOptions from '../api/auth/[...nextauth]';
+import { getServerSession } from 'next-auth';
 
 import { AuthLayout } from '@/components/layouts';
 import {
@@ -208,10 +210,18 @@ export default RegisterPage;
 
 export const getServerSideProps: GetServerSideProps = async ({
     req,
+    res,
     query,
 }) => {
     // Con esto poodemos obtenemer la información de la sesión activa
-    const session = await getSession({ req });
+    const session = (await getServerSession(req, res, authOptions)) as {
+        user?: {
+            name: string;
+            email: string;
+            image: string;
+        };
+        expires?: string;
+    };
 
     // Obtenemos el query que viene delo login
     const { p = '/' } = query;

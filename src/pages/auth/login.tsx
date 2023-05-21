@@ -4,7 +4,9 @@ import { GetServerSideProps } from 'next';
 import NextLink from 'next/link';
 
 import { useForm } from 'react-hook-form';
-import { getSession, signIn } from 'next-auth/react';
+import { signIn } from 'next-auth/react';
+import authOptions from '../api/auth/[...nextauth]';
+import { getServerSession } from 'next-auth';
 
 import { AuthLayout } from '@/components/layouts';
 import {
@@ -59,6 +61,8 @@ const LoginPage = () => {
         // Función de next auth que se usa para logearse, require de un provider y las opciones, por defecto hace refresh esto
 
         try {
+            console.log(email, password);
+
             await signIn('credentials', {
                 email,
                 password,
@@ -179,10 +183,19 @@ export default LoginPage;
 
 export const getServerSideProps: GetServerSideProps = async ({
     req,
+    res,
     query,
 }) => {
     // Con esto poodemos obtenemer la información de la sesión activa
-    const session = await getSession({ req });
+    const session = (await getServerSession(req, res, authOptions)) as {
+        user?: {
+            name: string;
+            email: string;
+            image: string;
+        };
+    };
+
+    console.log(session);
 
     // Obtenemos el query que viene delo login
     const { p = '/' } = query;

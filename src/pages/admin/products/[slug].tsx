@@ -209,8 +209,6 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
                     },
                 });
 
-                console.log(data);
-
                 setValue('images', [...getValues('images'), data.image_url], {
                     shouldValidate: true,
                 });

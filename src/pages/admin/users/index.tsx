@@ -55,7 +55,6 @@ const UserPage = () => {
             );
         } catch (error) {
             setUsers(prevUsers);
-            console.log(error);
             alert('No se pudo actualizar el rol del usuario');
         }
     };

@@ -141,8 +141,6 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
             props: { orders },
         };
     } catch (error) {
-        console.log(error);
-
         return {
             redirect: {
                 destination: '/',
