@@ -65,8 +65,8 @@ const SearchPage: NextPage<Props> = ({ products, foundProducts, query }) => {
 
 export default SearchPage;
 
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
-    const { query = '' } = ctx.params as { query: string };
+export const getServerSideProps: GetServerSideProps = async ({ params }) => {
+    const { query = '' } = params as { query: string };
 
     if (query.length <= 0) {
         return {
@@ -76,6 +76,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
             },
         };
     }
+
     const resp = await fetch(`http://localhost:3452/api/search/${query}`);
 
     let { products } = (await resp.json()) as {
@@ -86,6 +87,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     const foundProducts = products.length > 0;
 
     // Si no se encuentra ningun producto, realizamos una petición para obtener todos los productos
+    // TODO: retornar otros productos
 
     if (!foundProducts) {
         const resp = await fetch(`http://localhost:3452/api/products`);
@@ -96,8 +98,6 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 
         products = allProducts;
     }
-
-    // TODO: retornar otros productos
 
     return {
         props: {

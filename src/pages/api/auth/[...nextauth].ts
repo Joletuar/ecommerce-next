@@ -7,10 +7,13 @@ import GithubProvider from 'next-auth/providers/github';
 
 export default NextAuth({
     providers: [
+        // Provider de GitHub para autenticarse
         GithubProvider({
             clientId: process.env.GITHUB_ID!,
             clientSecret: process.env.GITHUB_SECRET!,
         }),
+
+        // Provider que permite realizar la autenticación con sistema personalizado
         Credentials({
             name: 'Custom Login', // Nombre del proveedor de autenticación
             credentials: {
@@ -27,6 +30,7 @@ export default NextAuth({
                     placeholder: '*****',
                 },
             },
+
             // Función que permite setear el usuario obtenido de nuestro login personalizado
             async authorize(credentials, req) {
                 const result = await dbUsers.checkUserEmailPassword(
@@ -67,19 +71,20 @@ export default NextAuth({
         strategy: 'jwt', // forma de validar la sessión
         updateAge: 86400, // 1d, el tiempo que la sessión se revalida/actualiza
     },
-
+    
     // Por defecto trabaja con JWT si no se especifica nada
-    // Aqui se especifica como se firman los jwt, que data irá en el payload, etc
+    
     callbacks: {
+        // Aqui se especifica como se firman los jwt, que data irá en el payload, etc
         // Función que se ejecuta cuando se genera el jwt, primero se genera esto antes de la session
         async jwt({ token, account, user }) {
             if (account) {
                 // Seteamos el token que viene de la cuenta
                 token.accesToken = account.access_token;
-                console.log({ acces_token: account?.access_token });
-
+                
+                // Cuando usamos un sistema personalizado el type del account será CREDENTIALS, pero cuando es alguna red social es OAUTH
                 switch (account.type) {
-                    // Si utilizo alguna red para autenticarse
+                    // Si utilizamos alguna red/provider para autenticar
                     case 'oauth':
                         token.user = await dbUsers.oAuthToDbUser(
                             user?.email || '',
@@ -90,7 +95,7 @@ export default NextAuth({
 
                         break;
 
-                    // Si el tipo es de credentials el token user será igual al user que viene
+                    // Si de credentials el token user será igual al user que viene de nuestro sistema personalizado
                     case 'credentials':
                         token.user = user;
                         token.id = user.id;
@@ -113,4 +118,3 @@ export default NextAuth({
     },
 });
 
-// Cuando usamos un sistema personaliza el type del account será CREDENTIALS, pero cuando es alguna red social es OAUTH

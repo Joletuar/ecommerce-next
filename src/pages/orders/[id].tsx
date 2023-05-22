@@ -25,6 +25,7 @@ import {
 } from '@mui/icons-material';
 import { tesloApi } from '@/api';
 import { IOrder } from '@/interfaces';
+import { FullScreenLoading } from '@/components/ui';
 
 interface Props {
     order: IOrder;
@@ -50,9 +51,12 @@ const OrderPage: NextPage<Props> = ({ order }) => {
         // console.log('-------->', details);
 
         if (details.status !== 'COMPLETED') {
-            return alert('No hay pago en Paypal');
+            return alert('No se pudo completar la transacción');
         }
+
         setIsPaying(true);
+
+        // Si la transacción de realizó con exito entonces, hacemos le dicemos al backend que verifique y marque la orden como pagada
 
         try {
             const { data } = await tesloApi.post<{
@@ -62,24 +66,39 @@ const OrderPage: NextPage<Props> = ({ order }) => {
                 transactionId: details.id,
                 orderId: order._id,
             });
-            // console.log('--->', data);
 
             if (!data.ok) {
-                return alert('Error');
+                return alert(
+                    'La transacción realiza no es válida, contacte con el soporte'
+                );
             }
         } catch (error) {
-            // console.log(error);
             setIsPaying(false);
-            alert('Error');
+            alert('Hubo un error al validar la transaccion');
         } finally {
             // Con esto podemos recargamos la página
             router.reload();
         }
     };
 
+    if (isPaying) {
+        return (
+            <ShopLayout
+                title={`Resumen de la orden`}
+                pageDescription={`Resumen de la orden ${_id} antes de pagar`}
+            >
+                <Typography variant='h1' component='h1'>
+                    Orden: {_id}
+                </Typography>
+
+                <FullScreenLoading />
+            </ShopLayout>
+        );
+    }
+
     return (
         <ShopLayout
-            title={`Resumen de la orden ${_id}`}
+            title={`Resumen de la orden`}
             pageDescription={`Resumen de la orden ${_id} antes de pagar`}
         >
             <Typography variant='h1' component='h1'>

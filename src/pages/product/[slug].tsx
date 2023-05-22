@@ -114,6 +114,7 @@ const ProductPage: NextPage<Props> = ({ producto }) => {
                             />
                         ) : (
                             <Button
+                                disabled={tempCartProduct.size ? false : true}
                                 onClick={onAddProduct}
                                 color='secondary'
                                 className='circular-btn'
@@ -227,6 +228,7 @@ export const getStaticProps: GetStaticProps = async (ctx) => {
     // Con el slug obtenido de la ruta hacemos la consulta a la base de datos par obtener información del producto
 
     const data = await fetch(`http://localhost:3452/api/products/${slug}`);
+
     const { producto, ok } = (await data.json()) as {
         ok: boolean;
         producto: IProduct;
