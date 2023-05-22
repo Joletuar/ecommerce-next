@@ -1,17 +1,19 @@
 import { IDataFetched } from '@/interfaces';
 import useSWR, { SWRConfiguration } from 'swr';
 
-// const fetcher = (...args: [key: string]) =>
-//     fetch(...args).then((res) => res.json());
+// El argumento config se pasa de manera automática a traves del contexto del SWR Provider
 
 export const useProducts = (url: string, config: SWRConfiguration = {}) => {
     // Mediante este hook podemos hacer el fetching de nuestra data
 
-    // const { data, error } = useSWR<IDataFetched>(
-    //     `http://localhost:3452/api${url}`,
-    //     fetcher,
-    //     config
-    // );
+    /**
+     * 
+    const { data, error } = useSWR<IDataFetched>(
+        `http://localhost:3452/api${url}`,
+        fetcher,
+        config
+        );
+    */
 
     const { data, error } = useSWR<IDataFetched>(
         `http://localhost:3452/api${url}`,
