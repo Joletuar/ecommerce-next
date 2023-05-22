@@ -4,12 +4,7 @@ import NextLink from 'next/link';
 
 import { UiContext } from '@/context';
 
-import Toolbar from '@mui/material/Toolbar';
-import AppBar from '@mui/material/AppBar';
-import Link from '@mui/material/Link';
-import Typography from '@mui/material/Typography';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
+import { Toolbar, AppBar, Link, Typography, Box, Button } from '@mui/material';
 
 export const AdminNavbar = () => {
     const { toggleSideMenu } = useContext(UiContext);

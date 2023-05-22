@@ -5,19 +5,22 @@ import { useRouter } from 'next/router';
 
 import { CartContext, UiContext } from '@/context';
 
-import Toolbar from '@mui/material/Toolbar';
-import AppBar from '@mui/material/AppBar';
-import Link from '@mui/material/Link';
-import Typography from '@mui/material/Typography';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import IconButton from '@mui/material/IconButton';
-import Badge from '@mui/material/Badge';
-
 import SearchOutlined from '@mui/icons-material/SearchOutlined';
 import ShoppingCartCheckoutOutlined from '@mui/icons-material/ShoppingCartCheckoutOutlined';
-import { Input, InputAdornment } from '@mui/material';
 import { ClearOutlined } from '@mui/icons-material';
+
+import {
+    Input,
+    InputAdornment,
+    Toolbar,
+    AppBar,
+    Typography,
+    Link,
+    Box,
+    Button,
+    IconButton,
+    Badge,
+} from '@mui/material';
 
 export const Nabvar = () => {
     // Este hook nos información de la ruta actual

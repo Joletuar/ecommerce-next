@@ -14,7 +14,7 @@ import {
 } from '@mui/material';
 
 import { ItemCounter } from '../ui';
-import { ICartProduct, IOrder, IOrderItem } from '@/interfaces';
+import { ICartProduct, IOrderItem } from '@/interfaces';
 
 interface Props {
     editable?: boolean;
@@ -78,8 +78,6 @@ export const CartList: FC<Props> = ({ editable = true, products }) => {
                                 Talla: <strong>{product.size}</strong>
                             </Typography>
 
-                            {/* Condicional */}
-
                             {editable ? (
                                 <ItemCounter
                                     currentValue={product.quantity}
@@ -113,8 +111,6 @@ export const CartList: FC<Props> = ({ editable = true, products }) => {
                         <Typography variant='subtitle1'>
                             ${product.price} c/u
                         </Typography>
-
-                        {/* Editable */}
 
                         {editable && (
                             <Button

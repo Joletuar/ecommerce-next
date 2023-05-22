@@ -9,7 +9,6 @@ export const Providers = () => {
     useEffect(() => {
         // Esta función retorna una promesa con todos los proveedores registrados
         getProviders().then((prov) => {
-            // console.log(prov);
             setProviders(prov);
         });
     }, []);

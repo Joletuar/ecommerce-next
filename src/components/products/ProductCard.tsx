@@ -1,6 +1,5 @@
 import { FC, useMemo, useState } from 'react';
 import NextLink from 'next/link';
-import { useRouter } from 'next/router';
 
 import {
     Grid,
@@ -28,9 +27,6 @@ export const ProductCard: FC<Props> = ({ product }) => {
     const productImage = useMemo(() => {
         return isHovered ? product.images[1] : product.images[0];
     }, [isHovered]);
-
-    // Obtenemos los parametros de ruta
-    const { query } = useRouter();
 
     return (
         <>

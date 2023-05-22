@@ -22,11 +22,6 @@ export const SummaryTitle: FC<Props> = ({ title, subTitle, icon }) => {
                         alignItems: 'center',
                     }}
                 >
-                    {/* <CreditCardOffOutlined
-                        color={'secondary'}
-                        sx={{ fontSize: 40 }} // Con esto modificamos el tamaño del icono
-                    /> */}
-
                     {icon}
                 </CardContent>
 

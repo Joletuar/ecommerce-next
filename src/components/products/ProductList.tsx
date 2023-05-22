@@ -6,7 +6,6 @@ import { Grid } from '@mui/material';
 import { ProductCard } from './ProductCard';
 
 interface Props {
-    // children?: JSX.Element[] | JSX.Element;
     products: IProduct[];
 }
 

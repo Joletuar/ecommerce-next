@@ -2,6 +2,7 @@ import { FC } from 'react';
 
 import { SideMenu } from '../ui';
 import { AdminNavbar } from '../admin';
+
 import { Box, Typography } from '@mui/material';
 
 interface Props {
