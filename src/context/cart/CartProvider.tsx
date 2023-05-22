@@ -151,6 +151,7 @@ export const CartProvider: FC<Props> = ({ children }) => {
         Cookie.set('city', address.city);
         Cookie.set('country', address.country);
         Cookie.set('phone', address.phone);
+
         dispatch({
             type: '[Cart] - Update address from cookies',
             payload: address,

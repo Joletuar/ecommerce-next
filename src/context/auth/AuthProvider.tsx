@@ -1,5 +1,4 @@
 import { FC, useEffect, useReducer } from 'react';
-// import { useRouter } from 'next/router';
 import { useSession, signOut } from 'next-auth/react';
 
 import { AuthContext, authReducer } from '.';
@@ -25,9 +24,8 @@ interface Props {
 export const AuthProvider: FC<Props> = ({ children }) => {
     const [state, dispatch] = useReducer(authReducer, AUTH_INITIAL_STATE);
 
+    // El useSession nos retorna información de la sesión actual del usuario
     const { data, status } = useSession();
-
-    // const router = useRouter();
 
     useEffect(() => {
         // Con el status podemos saber si estamos: loading, authenticated o unauthenticated
