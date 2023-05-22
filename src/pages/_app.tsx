@@ -12,17 +12,20 @@ import { AuthProvider, CartProvider, UiProvider } from '@/context';
 export default function App({ Component, pageProps }: AppProps) {
     return (
         <>
-            {/* Aqui llamamos nuestro provdier de autenticación */}
+            {/* Provider de Auth de NextAuth*/}
             <SessionProvider>
-                {/* Provider de Paypal */}
+                {/* Provider de Auth propio*/}
                 <AuthProvider>
+                    {/* Provider de Paypal */}
                     <PayPalScriptProvider
                         options={{
                             'client-id':
                                 process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID || '',
                         }}
                     >
+                        {/* Provider de SWR para el manejo de peticiones AJAX */}
                         <SWRConfig
+                            // Este será el objeto config que será pasado al hook
                             value={{
                                 fetcher: (resource, init) =>
                                     fetch(resource, init).then((res) =>
@@ -30,9 +33,13 @@ export default function App({ Component, pageProps }: AppProps) {
                                     ),
                             }}
                         >
+                            {/* Procvider del UI */}
                             <UiProvider>
+                                {/* Provider del cart  */}
                                 <CartProvider>
+                                    {/* Provider del tema de la app */}
                                     <ThemeProvider theme={lightTheme}>
+                                        {/* Componente que permite resetear todos los estilos CSS */}
                                         <CssBaseline />
                                         <Component {...pageProps} />
                                     </ThemeProvider>

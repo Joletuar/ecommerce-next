@@ -3,8 +3,7 @@
 import { NextPage } from 'next';
 
 import { ShopLayout } from '@/components/layouts';
-import Typography from '@mui/material/Typography';
-import Box from '@mui/material/Box';
+import { Typography, Box } from '@mui/material';
 
 const Custom404Page: NextPage = () => {
     return (
@@ -35,7 +34,7 @@ const Custom404Page: NextPage = () => {
                     404 |
                 </Typography>
 
-                <Typography ml={2}>Something doesn´t working</Typography>
+                <Typography ml={2}>Something doesn't working</Typography>
             </Box>
         </ShopLayout>
     );
