@@ -67,39 +67,51 @@ export const oAuthToDbUser = async (oAuthEmail: string, oAuthName: string) => {
             // Si no existe entonces lo registramos usando los datos que vienen del proveedor que usó para registrarse
 
             if (error.response?.data.message === 'El usuario no existe') {
-                try {
-                    // Definimos primero la url y despues el body
-                    const { data } = await tesloApi.post<{
-                        user: IUser;
-                        token: string;
-                        ok: boolean;
-                    }>('/user/register', {
-                        email: oAuthEmail,
-                        password: '@',
-                        name: oAuthName,
-                        role: 'client',
-                    });
+                const data = await createNewUserWithProviders(
+                    oAuthEmail,
+                    oAuthName
+                );
 
-                    // Obtenemos los datos
-                    const { user, ok, token } = data;
-
-                    // Si no es ok entonces retornamos false
-                    if (ok) {
-                        const { _id, name, email, role } = user;
-                        return {
-                            id: _id,
-                            name,
-                            email,
-                            role,
-                            token,
-                        };
-                    }
-
-                    return null;
-                } catch (error) {
-                    return null;
-                }
+                return data;
             }
         }
+    }
+};
+
+const createNewUserWithProviders = async (
+    oAuthEmail: string,
+    oAuthName: string
+) => {
+    try {
+        // Definimos primero la url y despues el body
+        const { data } = await tesloApi.post<{
+            user: IUser;
+            token: string;
+            ok: boolean;
+        }>('/user/register', {
+            email: oAuthEmail,
+            password: '@',
+            name: oAuthName,
+            role: 'client',
+        });
+
+        // Obtenemos los datos
+        const { user, ok, token } = data;
+
+        // Si no es ok entonces retornamos false
+        if (ok) {
+            const { _id, name, email, role } = user;
+            return {
+                id: _id,
+                name,
+                email,
+                role,
+                token,
+            };
+        }
+
+        return null;
+    } catch (error) {
+        return null;
     }
 };
