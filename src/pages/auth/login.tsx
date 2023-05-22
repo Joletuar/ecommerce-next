@@ -58,9 +58,8 @@ const LoginPage = () => {
 
         // router.replace(destination);
 
-        // Función de next auth que se usa para logearse, require de un provider y las opciones, por defecto hace refresh esto
-
         try {
+            // Función de next auth que se usa para logearse, require de un provider y las opciones, por defecto hace refresh esto
             await signIn('credentials', {
                 email,
                 password,
