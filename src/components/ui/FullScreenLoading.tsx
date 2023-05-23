@@ -1,6 +1,11 @@
 import { Box, CircularProgress, Typography } from '@mui/material';
+import { FC } from 'react';
 
-export const FullScreenLoading = () => {
+interface Props {
+    text?: string;
+}
+
+export const FullScreenLoading: FC<Props> = ({ text = 'Cargando...' }) => {
     return (
         <Box
             display='flex'
@@ -11,7 +16,7 @@ export const FullScreenLoading = () => {
         >
             {/* La prop "thickness" indica el grosor de la linea del circulo */}
             <Typography mb={2} variant='h2' fontWeight={200} fontSize={20}>
-                Cargando...
+                {text}
             </Typography>
             <CircularProgress thickness={2} />
         </Box>

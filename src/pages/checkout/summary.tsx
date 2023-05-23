@@ -76,7 +76,7 @@ const SummaryPage = () => {
                     Resumen de la Orden
                 </Typography>
 
-                <FullScreenLoading />
+                <FullScreenLoading text='Confirmando Orden...' />
             </ShopLayout>
         );
     }
