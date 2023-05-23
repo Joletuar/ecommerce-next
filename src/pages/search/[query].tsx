@@ -3,9 +3,8 @@ import { GetServerSideProps, NextPage } from 'next';
 import { ShopLayout } from '@/components/layouts';
 import { ProductList } from '@/components/products';
 
-import Typography from '@mui/material/Typography'; // Es recomendable usar este tipo de importaciones porque es más rapido
 import { IProduct } from '@/interfaces';
-import { Box } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 
 interface Props {
     products: IProduct[];

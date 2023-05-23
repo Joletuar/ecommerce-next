@@ -271,7 +271,7 @@ export const getServerSideProps: GetServerSideProps = async ({
         if (!ok) {
             return {
                 redirect: {
-                    destination: `orders/history`,
+                    destination: `/orders/history`,
                     permanent: false,
                 },
             };

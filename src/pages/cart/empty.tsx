@@ -5,7 +5,7 @@ import { ShopLayout } from '@/components/layouts';
 import { Box, Link, Typography } from '@mui/material';
 import { RemoveShoppingCartOutlined } from '@mui/icons-material';
 
-const empty: NextPage = () => {
+const EmptyPage: NextPage = () => {
     return (
         <ShopLayout
             title='Carrito de compras vacío'
@@ -41,4 +41,4 @@ const empty: NextPage = () => {
     );
 };
 
-export default empty;
+export default EmptyPage;
