@@ -21,11 +21,12 @@ import {
 
 import { countries } from '@/utils';
 import Cookie from 'js-cookie';
+import { FullScreenLoading } from '@/components/ui';
 
 const SummaryPage = () => {
     const router = useRouter();
-    const { shippingAddress, order, createOrder } = useContext(CartContext);
 
+    const { shippingAddress, order, createOrder } = useContext(CartContext);
     const [isPosting, setIsPosting] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
 
@@ -63,6 +64,21 @@ const SummaryPage = () => {
 
     if (!shippingAddress) {
         return <></>;
+    }
+
+    if (isPosting) {
+        return (
+            <ShopLayout
+                title='Resumen'
+                pageDescription='Resumen de la orden antes de pagar'
+            >
+                <Typography variant='h1' component='h1'>
+                    Resumen de la Orden
+                </Typography>
+
+                <FullScreenLoading />
+            </ShopLayout>
+        );
     }
 
     return (
