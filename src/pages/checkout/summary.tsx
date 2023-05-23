@@ -41,7 +41,7 @@ const SummaryPage = () => {
             countries.find(
                 (country) => country.code === shippingAddress?.country
             ),
-        []
+        [shippingAddress]
     );
 
     const handleOrder = async () => {

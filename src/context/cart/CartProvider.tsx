@@ -76,7 +76,7 @@ export const CartProvider: FC<Props> = ({ children }) => {
                 address2: Cookie.get('address2') || '',
                 zip: Cookie.get('zip') || '',
                 city: Cookie.get('city') || '',
-                country: Cookie.get('country') || 'ECU',
+                country: Cookie.get('country') || '',
                 phone: Cookie.get('phone') || '',
             };
 

@@ -76,7 +76,6 @@ export default NextAuth({
             if (account) {
                 // Seteamos el token que viene de la cuenta
                 token.accesToken = account.access_token;
-                console.log({ acces_token: account?.access_token });
 
                 switch (account.type) {
                     // Si utilizo alguna red para autenticarse
