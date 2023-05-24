@@ -110,7 +110,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
     const session: any = await getSession({ req });
     // const session: any = await getServerSession(req, res, authOptions);
 
-    const id = session?.user.id;
+    const id = session?.user?.id || session?.user?._id;
 
     if (!session) {
         return {
