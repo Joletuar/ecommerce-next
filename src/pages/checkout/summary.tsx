@@ -22,6 +22,7 @@ import {
 import { countries } from '@/utils';
 import Cookie from 'js-cookie';
 import { FullScreenLoading } from '@/components/ui';
+import { getSession, useSession } from 'next-auth/react';
 
 const SummaryPage = () => {
     const router = useRouter();
@@ -29,6 +30,7 @@ const SummaryPage = () => {
     const { shippingAddress, order, createOrder } = useContext(CartContext);
     const [isPosting, setIsPosting] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
+    // const { data: session, status } = useSession();
 
     useEffect(() => {
         if (!Cookie.get('firstName')) {

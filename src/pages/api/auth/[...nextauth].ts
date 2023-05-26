@@ -75,24 +75,22 @@ export default NextAuth({
         async jwt({ token, account, user }) {
             if (account) {
                 // Seteamos el token que viene de la cuenta
-                token.accesToken = account.access_token;
+                // token.accesToken = account.access_token;
 
                 switch (account.type) {
-                    // Si utilizo alguna red para autenticarse
+                    // Si utiliza alguna red para autenticarse
                     case 'oauth':
-                        token.user = await dbUsers.oAuthToDbUser(
+                        const userDb = await dbUsers.oAuthToDbUser(
                             user?.email || '',
                             user?.name || ''
                         );
 
-                        token.id = user.id;
-
+                        token.user = userDb;
                         break;
 
                     // Si el tipo es de credentials el token user será igual al user que viene
                     case 'credentials':
                         token.user = user;
-                        token.id = user.id;
                         break;
                 }
             }
@@ -103,10 +101,9 @@ export default NextAuth({
 
         // Función que se ejecuta cuando se crea un nueva sesión
         async session({ session, token, user }) {
-            session.accessToken = token.accessToken;
             session.user = token.user as any;
 
-            // Se regresa un session
+            // Se regresa la session modificada
             return session;
         },
     },

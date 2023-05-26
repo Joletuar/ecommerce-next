@@ -25,6 +25,7 @@ import {
 } from '@mui/icons-material';
 import { tesloApi } from '@/api';
 import { IOrder } from '@/interfaces';
+import { getToken } from 'next-auth/jwt';
 
 interface Props {
     order: IOrder;
@@ -248,10 +249,10 @@ export const getServerSideProps: GetServerSideProps = async ({
 }) => {
     const { id = '' } = query;
 
-    const session: any = await getSession({ req });
-    console.log({ ID: session });
+    // const session: any = await getSession({ req });
+    const token = await getToken({ req });
 
-    if (!session) {
+    if (!token?.user) {
         return {
             redirect: {
                 destination: `/auth/login?p=${id}`,
@@ -278,7 +279,7 @@ export const getServerSideProps: GetServerSideProps = async ({
             };
         }
 
-        const idSession = session?.user.id;
+        const { id: idSession } = token!.user as { id: string };
 
         if (order?.user?.toString() != idSession) {
             return {

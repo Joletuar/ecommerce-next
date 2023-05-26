@@ -5,8 +5,8 @@ import { useRouter } from 'next/router';
 
 import { useForm } from 'react-hook-form';
 import { signIn } from 'next-auth/react';
-import authOptions from '../api/auth/[...nextauth]';
-import { getServerSession } from 'next-auth';
+// import authOptions from '../api/auth/[...nextauth]';
+// import { getServerSession } from 'next-auth';
 
 import { AuthLayout } from '@/components/layouts';
 import {
@@ -22,6 +22,7 @@ import { validations } from '@/utils';
 import { ErrorOutline } from '@mui/icons-material';
 import { AuthContext } from '@/context';
 import { Providers } from '@/components/ui';
+import { getToken } from 'next-auth/jwt';
 
 // Tipado de los campos del formulario
 type FormData = {
@@ -210,24 +211,27 @@ export default RegisterPage;
 
 export const getServerSideProps: GetServerSideProps = async ({
     req,
-    res,
+    // res,
     query,
 }) => {
     // Con esto poodemos obtenemer la información de la sesión activa
-    const session = (await getServerSession(req, res, authOptions)) as {
-        user?: {
-            name: string;
-            email: string;
-            image: string;
-        };
-        expires?: string;
-    };
+    // const session = (await getServerSession(req, res, authOptions)) as {
+    //     user?: {
+    //         name: string;
+    //         email: string;
+    //         image: string;
+    //     };
+    //     expires?: string;
+    // };
+
+    // Obtenemos el token para saber si tenemos alguna sesión activa
+    const token = await getToken({ req });
 
     // Obtenemos el query que viene delo login
     const { p = '/' } = query;
 
     // Si tenemos un sesión activa redireccionamos al usuario hacia la página principal o hacia la dirección que tenga el query
-    if (session) {
+    if (token?.user) {
         return {
             redirect: {
                 destination: p.toLocaleString(),

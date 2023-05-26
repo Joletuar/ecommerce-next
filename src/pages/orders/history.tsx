@@ -1,6 +1,7 @@
 import { GetServerSideProps, NextPage } from 'next';
 import NextLink from 'next/link';
-import { getSession } from 'next-auth/react';
+import { getToken } from 'next-auth/jwt';
+// import { getSession } from 'next-auth/react';
 // import authOptions from '../api/auth/[...nextauth]';
 // import { getServerSession } from 'next-auth';
 
@@ -107,13 +108,12 @@ const HistoryPage: NextPage<Props> = ({ orders }) => {
 export default HistoryPage;
 
 export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
-    const session: any = await getSession({ req });
+    // const session: any = await getSession({ req });
     // const session: any = await getServerSession(req, res, authOptions);
-    console.log({ HISTORY: session });
 
-    const id = session?.user?.id || session?.user?._id;
+    const token = await getToken({ req });
 
-    if (!session) {
+    if (!token?.user) {
         return {
             redirect: {
                 destination: `/auth/login?p=/orders/history`,
@@ -121,6 +121,8 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
             },
         };
     }
+
+    const { id } = token!.user as { id: string };
 
     try {
         const { data } = await tesloApi.get<{

@@ -4,7 +4,7 @@ import { GetServerSideProps } from 'next';
 import NextLink from 'next/link';
 
 import { useForm } from 'react-hook-form';
-import { getSession, signIn } from 'next-auth/react';
+import { signIn } from 'next-auth/react';
 // import authOptions from '../api/auth/[...nextauth]';
 // import { getServerSession } from 'next-auth';
 
@@ -21,6 +21,7 @@ import {
 import { validations } from '@/utils';
 import { ErrorOutline } from '@mui/icons-material';
 import { Providers } from '@/components/ui';
+import { getToken } from 'next-auth/jwt';
 
 // Tipado de los campos del formulario
 type FormData = {
@@ -192,14 +193,14 @@ export const getServerSideProps: GetServerSideProps = async ({
     //     };
     // };
 
-    const session = await getSession({ req });
-    console.log({ LOGIN: session });
+    // Obtenemos el token para saber si tenemos alguna sesión activa
+    const token = await getToken({ req });
 
-    // Obtenemos el query que viene delo login
+    // Obtenemos el query que viene del login
     const { p = '/' } = query;
 
     // Si tenemos un sesión activa redireccionamos al usuario hacia la página principal o hacia la dirección que tenga el query
-    if (session) {
+    if (token?.user) {
         return {
             redirect: {
                 destination: p.toLocaleString(),
