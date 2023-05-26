@@ -66,7 +66,7 @@ export const oAuthToDbUser = async (oAuthEmail: string, oAuthName: string) => {
         if (axios.isAxiosError(error)) {
             // Si no existe entonces lo registramos usando los datos que vienen del proveedor que usó para registrarse
 
-            if (error.response?.data.message === 'El usuario no existe') {
+            if (error.response?.data.message === 'EL USUARIO NO EXISTE') {
                 const data = await createNewUserWithProviders(
                     oAuthEmail,
                     oAuthName

@@ -109,7 +109,7 @@ export default HistoryPage;
 export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
     const session: any = await getSession({ req });
     // const session: any = await getServerSession(req, res, authOptions);
-    // console.log(session);
+    console.log({ HISTORY: session });
 
     const id = session?.user?.id || session?.user?._id;
 
