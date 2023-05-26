@@ -1,9 +1,6 @@
 import { GetServerSideProps, NextPage } from 'next';
 import NextLink from 'next/link';
 import { getToken } from 'next-auth/jwt';
-// import { getSession } from 'next-auth/react';
-// import authOptions from '../api/auth/[...nextauth]';
-// import { getServerSession } from 'next-auth';
 
 import { ShopLayout } from '@/components/layouts';
 

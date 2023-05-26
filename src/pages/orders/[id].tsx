@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
-import { getSession } from 'next-auth/react';
+import { getToken } from 'next-auth/jwt';
 
 import { CardOrderSummary, CartList } from '@/components/cart';
 
@@ -25,7 +25,6 @@ import {
 } from '@mui/icons-material';
 import { tesloApi } from '@/api';
 import { IOrder } from '@/interfaces';
-import { getToken } from 'next-auth/jwt';
 
 interface Props {
     order: IOrder;
@@ -148,6 +147,8 @@ const OrderPage: NextPage<Props> = ({ order }) => {
                             </Typography>
 
                             <Typography>{shippingAddress?.city}</Typography>
+
+                            {/* TODO: cambiar el codigo del país a su nombre completo */}
 
                             <Typography>{shippingAddress.country}</Typography>
 
