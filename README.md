@@ -2,7 +2,7 @@
 
 ## Descripción
 
-Este proyecto tuvo como objetivo crear una página ecommerce de venta de prendas de vestir para hombre, mujeres y niños. El diseño se basó en la tienda virtual Tesla Shop, donde se sacaron la mayoria de las funcionalidades. El proyecto fue realizado con un stack de tecnologías de Javascript usando como base de datos NOSQL MongoDB.
+Este proyecto tuvo como objetivo crear una página ecommerce de venta de prendas de vestir para hombre, mujeres y niños. El diseño se basó en la tienda virtual Tesla Shop, donde se sacaron la mayoria de las funcionalidades. El proyecto fue realizado con un stack de tecnologías de Javascript usando como base de datos NOSQL MongoDB. Tambien se utilizaron servicios como Cloudinary para alojar archivos media.
 
 ## Tecnologías
 
