@@ -13,15 +13,6 @@ Este proyecto tuvo como objetivo crear una página ecommerce de venta de prendas
 -   Typescript
 -   MUI
 
-### Backend
-
--   Node Js
--   Express Js
-
-### Base de datos
-
--   NOSQL: MongoDB
-
 ## Despliegue Local
 
 ### Configuración de variables de entorno
