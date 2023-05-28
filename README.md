@@ -70,3 +70,37 @@ http://localhost:3000
 ### **!!!IMPORTANTE!!!**
 
 El sistema backend junto a la base de datos ya debe haber sido levantado y configurado de manera correcta para que el frontend pueda funcionar correctamente.
+
+## Algunas imágenes del Proyecto
+
+#### Pagina Inicio
+
+![Página Inicio](https://res.cloudinary.com/dviezfcgy/image/upload/v1685310188/journal/toy7sjwlyncsxr8ioyy5.png)
+
+#### Categorías
+
+![Página Inicio](https://res.cloudinary.com/dviezfcgy/image/upload/v1685310189/journal/wngmeoikeutsnevtzlal.png)
+
+#### Busqueda de producto
+
+![Página Inicio](https://res.cloudinary.com/dviezfcgy/image/upload/v1685310190/journal/hi57cfuwpzcm0zmozmlx.png)
+
+#### Selector de Tallas
+
+![Página Inicio](https://res.cloudinary.com/dviezfcgy/image/upload/v1685310188/journal/be08lnsxxvlrg5szdgcj.png)
+
+#### Carrito de productos
+
+![Página Inicio](https://res.cloudinary.com/dviezfcgy/image/upload/v1685310188/journal/dyye2oxxj26nqd5yeifw.png)
+
+#### Checkout
+
+![Página Inicio](https://res.cloudinary.com/dviezfcgy/image/upload/v1685310188/journal/wlhwrhoodnfaegzre1or.png)
+
+#### Pago de producto
+
+![Página Inicio](https://res.cloudinary.com/dviezfcgy/image/upload/v1685310189/journal/vphedg6xplsrzza8g6kk.png)
+
+#### Dashboard
+
+![Página Inicio](https://res.cloudinary.com/dviezfcgy/image/upload/v1685310187/journal/tk4wvgdbmhj1dfvppile.png)
