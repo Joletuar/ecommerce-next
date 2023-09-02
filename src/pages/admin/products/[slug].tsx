@@ -506,14 +506,14 @@ export const getServerSideProps: GetServerSideProps = async ({ query }) => {
     const { data } = await tesloApi.get<{
       ok: boolean;
       producto?: IProduct;
-    }>(`http://localhost:3452/api/products/new`);
+    }>(process.env.NEXT_PUBLIC_BACKEND_URL + '/new');
 
     dataTemp = data;
   } else {
     const { data } = await tesloApi.get<{
       ok: boolean;
       producto?: IProduct;
-    }>(`http://localhost:3452/api/products/${slug}`);
+    }>(process.env.NEXT_PUBLIC_BACKEND_URL + `/${slug}`);
 
     dataTemp = data;
   }

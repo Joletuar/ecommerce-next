@@ -7,8 +7,8 @@ import { ShopLayout } from '@/components/layouts';
 import { Box, Button, Chip, Grid, Typography } from '@mui/material';
 
 import {
-    ProductSelectSizesSelector,
-    ProductSlideShow,
+  ProductSelectSizesSelector,
+  ProductSlideShow,
 } from '@/components/products';
 
 import { ItemCounter } from '@/components/ui';
@@ -16,139 +16,130 @@ import { ICartProduct, IProduct, ISize } from '@/interfaces';
 import { CartContext } from '@/context';
 
 interface Props {
-    producto: IProduct;
+  producto: IProduct;
 }
 
 // No se acostumbra a generar esta páginas usando CSR, dado que esto no tiene SEO
 
 const ProductPage: NextPage<Props> = ({ producto }) => {
-    // Obtenemos los parametros de ruta
-    // const { query } = useRouter();
+  // Obtenemos los parametros de ruta
+  // const { query } = useRouter();
 
-    const router = useRouter();
-    const { onAddProductCart } = useContext(CartContext);
+  const router = useRouter();
+  const { onAddProductCart } = useContext(CartContext);
 
-    const [tempCartProduct, setTempCartProduct] = useState<ICartProduct>({
-        _id: producto._id,
-        image: producto.images[0],
-        price: producto.price,
-        slug: producto.slug,
-        title: producto.title,
-        gender: producto.gender,
-        quantity: 1,
-    });
+  const [tempCartProduct, setTempCartProduct] = useState<ICartProduct>({
+    _id: producto._id,
+    image: producto.images[0],
+    price: producto.price,
+    slug: producto.slug,
+    title: producto.title,
+    gender: producto.gender,
+    quantity: 1,
+  });
 
-    // Sobreescribimos o creamos la propiedad size con la talla seleccionada
-    const onHandleSelectSize = (size: ISize) => {
-        setTempCartProduct((oldState) => ({ ...oldState, size }));
-    };
+  // Sobreescribimos o creamos la propiedad size con la talla seleccionada
+  const onHandleSelectSize = (size: ISize) => {
+    setTempCartProduct((oldState) => ({ ...oldState, size }));
+  };
 
-    // Actualizamos el valor del contador
-    const updatedValue = (quantity: number) => {
-        setTempCartProduct((oldState) => ({
-            ...oldState,
-            quantity,
-        }));
-    };
+  // Actualizamos el valor del contador
+  const updatedValue = (quantity: number) => {
+    setTempCartProduct((oldState) => ({
+      ...oldState,
+      quantity,
+    }));
+  };
 
-    // Agregamos un nuevo producto solo si ya eligió una talla
-    const onAddProduct = () => {
-        if (!tempCartProduct.size) return;
+  // Agregamos un nuevo producto solo si ya eligió una talla
+  const onAddProduct = () => {
+    if (!tempCartProduct.size) return;
 
-        onAddProductCart(tempCartProduct);
+    onAddProductCart(tempCartProduct);
 
-        router.push('/cart');
-    };
+    router.push('/cart');
+  };
 
-    return (
-        <ShopLayout
-            title={producto.title}
-            pageDescription={producto.description}
-        >
-            <Grid container spacing={3}>
-                <Grid item xs={12} sm={7}>
-                    <ProductSlideShow images={producto.images} />
-                </Grid>
+  return (
+    <ShopLayout title={producto.title} pageDescription={producto.description}>
+      <Grid container spacing={3}>
+        <Grid item xs={12} sm={7}>
+          <ProductSlideShow images={producto.images} />
+        </Grid>
 
-                <Grid item xs={12} sm={5}>
-                    <Box display='flex' flexDirection='column'>
-                        {/* titulos */}
+        <Grid item xs={12} sm={5}>
+          <Box display='flex' flexDirection='column'>
+            {/* titulos */}
 
-                        {/* El "variant" indica como material va a tratar al componente, mientras que el "component" indica como se mostrará en el html */}
+            {/* El "variant" indica como material va a tratar al componente, mientras que el "component" indica como se mostrará en el html */}
 
-                        <Typography variant='h1' component='h1'>
-                            {producto.title}
-                        </Typography>
+            <Typography variant='h1' component='h1'>
+              {producto.title}
+            </Typography>
 
-                        <Typography variant='subtitle1' component='h2'>
-                            ${producto.price}
-                        </Typography>
+            <Typography variant='subtitle1' component='h2'>
+              ${producto.price}
+            </Typography>
 
-                        {/* cantidad */}
+            {/* cantidad */}
 
-                        <Box sx={{ my: 2 }}>
-                            <Typography variant='subtitle2'>
-                                Cantidad
-                            </Typography>
+            <Box sx={{ my: 2 }}>
+              <Typography variant='subtitle2'>Cantidad</Typography>
 
-                            <ItemCounter
-                                currentValue={tempCartProduct.quantity}
-                                updatedValue={updatedValue}
-                                maxValue={producto.inStock}
-                            />
-                            <ProductSelectSizesSelector
-                                sizes={producto.sizes}
-                                // Mandamos el size seleccionado por el usuario
-                                selectedSize={tempCartProduct.size}
-                                onHandleSelectSize={onHandleSelectSize}
-                            />
-                        </Box>
+              <ItemCounter
+                currentValue={tempCartProduct.quantity}
+                updatedValue={updatedValue}
+                maxValue={producto.inStock}
+              />
+              <ProductSelectSizesSelector
+                sizes={producto.sizes}
+                // Mandamos el size seleccionado por el usuario
+                selectedSize={tempCartProduct.size}
+                onHandleSelectSize={onHandleSelectSize}
+              />
+            </Box>
 
-                        {/* Este elemento permite mostrar información  */}
+            {/* Este elemento permite mostrar información  */}
 
-                        {producto.inStock <= 0 ? (
-                            <Chip
-                                label='No hay stock de momento'
-                                color='error'
-                                variant='outlined'
-                            />
-                        ) : (
-                            <Button
-                                onClick={onAddProduct}
-                                color='secondary'
-                                className='circular-btn'
-                                sx={{
-                                    ':hover': {
-                                        backgroundColor: 'rgb(19, 143, 232)',
-                                    },
-                                }}
-                            >
-                                {tempCartProduct.size
-                                    ? 'Agregar al carrito'
-                                    : 'Seleccione una talla'}
-                            </Button>
-                        )}
+            {producto.inStock <= 0 ? (
+              <Chip
+                label='No hay stock de momento'
+                color='error'
+                variant='outlined'
+              />
+            ) : (
+              <Button
+                onClick={onAddProduct}
+                color='secondary'
+                className='circular-btn'
+                sx={{
+                  ':hover': {
+                    backgroundColor: 'rgb(19, 143, 232)',
+                  },
+                }}
+              >
+                {tempCartProduct.size
+                  ? 'Agregar al carrito'
+                  : 'Seleccione una talla'}
+              </Button>
+            )}
 
-                        {/* Descripcion */}
+            {/* Descripcion */}
 
-                        <Box sx={{ mt: 3 }}>
-                            {/* La variante "subtitle2" pone en negrita el texto */}
+            <Box sx={{ mt: 3 }}>
+              {/* La variante "subtitle2" pone en negrita el texto */}
 
-                            <Typography variant='subtitle1'>
-                                Descripción:
-                            </Typography>
+              <Typography variant='subtitle1'>Descripción:</Typography>
 
-                            {/* La variante "body2" permite mostrar texto de manera compacta */}
+              {/* La variante "body2" permite mostrar texto de manera compacta */}
 
-                            <Typography variant='body2'>
-                                {producto.description}
-                            </Typography>
-                        </Box>
-                    </Box>
-                </Grid>
-            </Grid>
-        </ShopLayout>
-    );
+              <Typography variant='body2'>{producto.description}</Typography>
+            </Box>
+          </Box>
+        </Grid>
+      </Grid>
+    </ShopLayout>
+  );
 };
 
 export default ProductPage;
@@ -192,63 +183,63 @@ export default ProductPage;
 // Aqui devolvemos/generamos todas las posibles rutas
 
 export const getStaticPaths: GetStaticPaths = async () => {
-    const resp = await fetch(`http://localhost:3452/api/products`);
+  const resp = await fetch(process.env.NEXT_PUBLIC_BACKEND_URL + 'products');
 
-    // obtenemos todos los productos para obtener todo los slugs posibles
+  // obtenemos todos los productos para obtener todo los slugs posibles
 
-    const { products } = (await resp.json()) as {
-        ok: boolean;
-        products: IProduct[];
-    };
+  const { products } = (await resp.json()) as {
+    ok: boolean;
+    products: IProduct[];
+  };
 
-    return {
-        paths: products.map((obj) => ({
-            params: { slug: obj.slug },
-        })),
+  return {
+    paths: products.map((obj) => ({
+      params: { slug: obj.slug },
+    })),
 
-        // fallback (false): si la ruta accedida no existe, entonces retorna un 404
-        // fallback (true): si la ruta accedia no existe, el servidor la genera de manera dinámica y la almacena en caché,
-        //                  mientras el servidor la genera este puede retornar un pre rendering (versión preliminar) de la
-        //                  página hasta que este lista la real
-        // fallback ("blocking"): lo mismo que (true), pero mientras la página se genera el navegador se bloquea y despues
-        //                        se muestra la página cuando está lista
+    // fallback (false): si la ruta accedida no existe, entonces retorna un 404
+    // fallback (true): si la ruta accedia no existe, el servidor la genera de manera dinámica y la almacena en caché,
+    //                  mientras el servidor la genera este puede retornar un pre rendering (versión preliminar) de la
+    //                  página hasta que este lista la real
+    // fallback ("blocking"): lo mismo que (true), pero mientras la página se genera el navegador se bloquea y despues
+    //                        se muestra la página cuando está lista
 
-        fallback: 'blocking',
-    };
+    fallback: 'blocking',
+  };
 };
 
 // Obtenemos todas las rutas posibles para generar la pág con la info
 
 export const getStaticProps: GetStaticProps = async (ctx) => {
-    // Obtenemos el parámetro dinámico de la ruta
+  // Obtenemos el parámetro dinámico de la ruta
 
-    const { slug = '' } = ctx.params as { slug: string };
+  const { slug = '' } = ctx.params as { slug: string };
 
-    // Con el slug obtenido de la ruta hacemos la consulta a la base de datos par obtener información del producto
+  // Con el slug obtenido de la ruta hacemos la consulta a la base de datos par obtener información del producto
 
-    const data = await fetch(`http://localhost:3452/api/products/${slug}`);
-    const { producto, ok } = (await data.json()) as {
-        ok: boolean;
-        producto: IProduct;
-    };
+  const data = await fetch(`http://localhost:3452/api/products/${slug}`);
+  const { producto, ok } = (await data.json()) as {
+    ok: boolean;
+    producto: IProduct;
+  };
 
-    // Si el producto no existe redireccionamos a la pág principal
+  // Si el producto no existe redireccionamos a la pág principal
 
-    if (!ok) {
-        return {
-            redirect: {
-                destination: '/',
-                permanent: false, // Al indicar como false se da la posibilidad que la página si puede llegar a existir en un futuro
-            },
-        };
-    }
-
-    // Devolvemos las props al componente principal
-
+  if (!ok) {
     return {
-        props: { producto },
-        // Este dato está en segundos
-        // Con esto revalidamos la página cada 24 horas
-        revalidate: 86400, // 60*60*24
+      redirect: {
+        destination: '/',
+        permanent: false, // Al indicar como false se da la posibilidad que la página si puede llegar a existir en un futuro
+      },
     };
+  }
+
+  // Devolvemos las props al componente principal
+
+  return {
+    props: { producto },
+    // Este dato está en segundos
+    // Con esto revalidamos la página cada 24 horas
+    revalidate: 86400, // 60*60*24
+  };
 };
