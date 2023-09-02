@@ -75,32 +75,32 @@ El sistema backend junto a la base de datos ya debe haber sido levantado y confi
 
 #### Pagina Inicio
 
-![Página Inicio](https://res.cloudinary.com/dviezfcgy/image/upload/v1685310188/journal/toy7sjwlyncsxr8ioyy5.png)
+![Página Inicio](https://res.cloudinary.com/dviezfcgy/image/upload/v1685310188/assets-tesloshop/toy7sjwlyncsxr8ioyy5.png)
 
 #### Categorías
 
-![Página Inicio](https://res.cloudinary.com/dviezfcgy/image/upload/v1685310189/journal/wngmeoikeutsnevtzlal.png)
+![Página de Categorías](https://res.cloudinary.com/dviezfcgy/image/upload/v1685310189/assets-tesloshop/wngmeoikeutsnevtzlal.png)
 
 #### Busqueda de producto
 
-![Página Inicio](https://res.cloudinary.com/dviezfcgy/image/upload/v1685310190/journal/hi57cfuwpzcm0zmozmlx.png)
+![Página de Productos](https://res.cloudinary.com/dviezfcgy/image/upload/v1685310190/assets-tesloshop/hi57cfuwpzcm0zmozmlx.png)
 
 #### Selector de Tallas
 
-![Página Inicio](https://res.cloudinary.com/dviezfcgy/image/upload/v1685310188/journal/be08lnsxxvlrg5szdgcj.png)
+![Página de selector de Tallas](https://res.cloudinary.com/dviezfcgy/image/upload/v1685310188/assets-tesloshop/be08lnsxxvlrg5szdgcj.png)
 
 #### Carrito de productos
 
-![Página Inicio](https://res.cloudinary.com/dviezfcgy/image/upload/v1685310188/journal/dyye2oxxj26nqd5yeifw.png)
+![Página de carrito de Productos](https://res.cloudinary.com/dviezfcgy/image/upload/v1685310188/assets-tesloshop/dyye2oxxj26nqd5yeifw.png)
 
 #### Checkout
 
-![Página Inicio](https://res.cloudinary.com/dviezfcgy/image/upload/v1685310188/journal/wlhwrhoodnfaegzre1or.png)
+![Página de Checkout](https://res.cloudinary.com/dviezfcgy/image/upload/v1685310188/assets-tesloshop/wlhwrhoodnfaegzre1or.png)
 
 #### Pago de producto
 
-![Página Inicio](https://res.cloudinary.com/dviezfcgy/image/upload/v1685310189/journal/vphedg6xplsrzza8g6kk.png)
+![Página de pago de Producto](https://res.cloudinary.com/dviezfcgy/image/upload/v1685310189/assets-tesloshop/vphedg6xplsrzza8g6kk.png)
 
 #### Dashboard
 
-![Página Inicio](https://res.cloudinary.com/dviezfcgy/image/upload/v1685310187/journal/tk4wvgdbmhj1dfvppile.png)
+![Página de Mantenimiento](https://res.cloudinary.com/dviezfcgy/image/upload/v1685310187/assets-tesloshop/tk4wvgdbmhj1dfvppile.png)
