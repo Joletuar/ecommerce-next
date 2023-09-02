@@ -16,7 +16,7 @@ const UserPage = () => {
   const { user } = useContext(AuthContext);
 
   const { data, error } = useSWR<{ ok: boolean; users: IUser[] }>(
-    ['http://localhost:3452/api/admin/users', user?.token], // Parámetros que serán pasados el fetcher, deben ser en forma de lista
+    [process.env.NEXT_PUBLIC_BACKEND_URL + '/admin/users', user?.token], // Parámetros que serán pasados el fetcher, deben ser en forma de lista
     fetchWithToken // función que hará el fetch a la api
   );
 

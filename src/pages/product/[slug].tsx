@@ -183,7 +183,7 @@ export default ProductPage;
 // Aqui devolvemos/generamos todas las posibles rutas
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const resp = await fetch(process.env.NEXT_PUBLIC_BACKEND_URL + 'products');
+  const resp = await fetch(process.env.NEXT_PUBLIC_BACKEND_URL + '/products');
 
   // obtenemos todos los productos para obtener todo los slugs posibles
 
@@ -217,7 +217,9 @@ export const getStaticProps: GetStaticProps = async (ctx) => {
 
   // Con el slug obtenido de la ruta hacemos la consulta a la base de datos par obtener información del producto
 
-  const data = await fetch(`http://localhost:3452/api/products/${slug}`);
+  const data = await fetch(
+    process.env.NEXT_PUBLIC_BACKEND_URL + `/products/${slug}`
+  );
   const { producto, ok } = (await data.json()) as {
     ok: boolean;
     producto: IProduct;

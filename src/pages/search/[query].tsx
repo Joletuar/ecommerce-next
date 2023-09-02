@@ -75,7 +75,9 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
       },
     };
   }
-  const resp = await fetch(`http://localhost:3452/api/search/${query}`);
+  const resp = await fetch(
+    process.env.NEXT_PUBLIC_BACKEND_URL + `/search/${query}`
+  );
 
   let { products } = (await resp.json()) as {
     products: IProduct[];
